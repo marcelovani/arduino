@@ -22,44 +22,10 @@ output {
 		    readFile = function () {
 		        var reader = new FileReader();
 		        reader.onload = function () {
-		            //document.getElementById('out').innerHTML = reader.result;
 		            var dataPoints = getDataPointsFromCSV(reader.result);
-
-					// Clean clones.
-					for (var i = 1; i < 100; i++) {
-						id = 'chartContainer-' + i;
-						var div = document.getElementById(id);
-						if (div !== null) {
-							document.getElementById(id).remove();
-						}
-					}
-
-					// Display acceleration chart
-					divId = cloneDiv('chartContainer', 1);
-		           	var chart = new CanvasJS.Chart(divId, {
-					    title: {
-					         text: "Acceleration",
-					    },
-					    data: [{
-					         type: "line",
-					         dataPoints: dataPoints
-					      }]
-				    });
-				    chart.render();
-
-				    // Display velocity chart
-					var velocityPoints = calcVelocity(dataPoints);
-					divId = cloneDiv('chartContainer', 2);
-		           	var chart = new CanvasJS.Chart(divId, {
-					    title: {
-					         text: "Velocity",
-					    },
-					    data: [{
-					         type: "line",
-					         dataPoints: velocityPoints
-					      }]
-				    });
-				    chart.render();
+					clearCharts();
+					showAccelerationChart(dataPoints);
+					showVelocityChart(dataPoints);
 		        };
 		        reader.readAsBinaryString(fileInput.files[0]);
 		    };
@@ -68,7 +34,8 @@ output {
 
     }
 
-    function cloneDiv(id, i) {
+	// Creates clones of elements
+    function cloneElement(id, i) {
 		var div = document.getElementById(id),
 	    clone = div.cloneNode(true);
 		clone.id = id + '-' + i;
@@ -76,6 +43,48 @@ output {
 		document.body.appendChild(clone);
 
 		return clone.id;
+    }
+
+	// Clean charts.
+    function clearCharts() {	
+		for (var i = 1; i < 100; i++) {
+			id = 'chartContainer-' + i;
+			var div = document.getElementById(id);
+			if (div !== null) {
+				document.getElementById(id).remove();
+			}
+		}
+    }
+
+	// Display acceleration chart
+    function showAccelerationChart(dataPoints) {
+		divId = cloneElement('chartContainer', 1);
+       	var chart = new CanvasJS.Chart(divId, {
+		    title: {
+		         text: "Acceleration",
+		    },
+		    data: [{
+		         type: "line",
+		         dataPoints: dataPoints
+		      }]
+	    });
+	    chart.render();
+    }
+
+	// Display velocity chart
+    function showVelocityChart(dataPoints) {
+		var velocityPoints = calcVelocity(dataPoints);
+		divId = cloneElement('chartContainer', 2);
+       	var chart = new CanvasJS.Chart(divId, {
+		    title: {
+		         text: "Velocity",
+		    },
+		    data: [{
+		         type: "line",
+		         dataPoints: velocityPoints
+		      }]
+	    });
+	    chart.render();
     }
 
     function getDataPointsFromCSV(csv) {
