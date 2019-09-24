@@ -27,6 +27,7 @@ output {
 					clearCharts();
 					showAccelerationChart(dataPoints);
 					showVelocityChart(dataPoints);
+					detectChange(dataPoints);
 		        };
 		        reader.readAsBinaryString(fileInput.files[0]);
 		    };
@@ -166,7 +167,7 @@ output {
 			var curAcc = data[i].y;
 			var time = data[i].x;
 			var prevTime = data[i-1].x;
-			velocity += (prevAcc + curAcc) / 2 * (time - prevTime) / 1000;
+			velocity += (prevAcc + curAcc) / 2 * (time - prevTime);
         	velocityPoints.push({ 
                 x: time,
                 y: velocity
@@ -174,6 +175,22 @@ output {
 		}
 
         return velocityPoints;
+    }
+
+    // Detect a drop after it reached the peak
+    function detectChange(data) {
+    	var prevAcc = 0;
+    	var prevTime = 0;
+    	var velocity = 0;
+		for (i = 0; i < data.length; i++)
+		{
+			var curAcc = data[i].y; // Read Acc X
+			var time = data[i].x; // millis()
+			velocity += (prevAcc + curAcc) / 2 * (time - prevTime);
+
+			prevTime = time;
+			prevAcc = curAcc;
+		}
     }
 
   //]]>
