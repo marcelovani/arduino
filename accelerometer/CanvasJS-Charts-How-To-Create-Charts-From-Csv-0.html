@@ -16,9 +16,10 @@ output {
 
 <script type="text/javascript">
 //<![CDATA[
+
+    // Main
     window.onload = function() {      
 		var fileInput = document.getElementById("csv"),
-
 		    readFile = function () {
 		        var reader = new FileReader();
 		        reader.onload = function () {
@@ -45,7 +46,7 @@ output {
 		return clone.id;
     }
 
-	// Clean charts.
+	// Clean charts
     function clearCharts() {	
 		for (var i = 1; i < 100; i++) {
 			id = 'chartContainer-' + i;
@@ -87,6 +88,7 @@ output {
 	    chart.render();
     }
 
+    // Read csv and populate data
     function getDataPointsFromCSV(csv) {
     	var time, prevTime, accTime = 0;
     	var acceleration = 0;
@@ -154,6 +156,7 @@ output {
         return dataPoints;
     }
 
+    // Calculate velocity
     function calcVelocity(data) {
     	var velocityPoints = [];
     	var velocity = 0;
@@ -174,20 +177,6 @@ output {
     }
 
   //]]>
-</script>
-
-<script type="text/javascript">
-    var url = "data.csv";
-
-    plot = function() {
-	 
-
-	
-	$.get(url, function(data) {
-
-
-	});
-  }
 </script>
 
 </head>
