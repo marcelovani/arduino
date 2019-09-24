@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Chart using XML Data</title>
+<title>Velocity detector</title>
 <style>
 output {
     display: block;
@@ -35,22 +35,17 @@ output {
 					}
 
 					// Populate charts.
-					var title = "Data";
 					for (var i = 1; i < dataPoints.length; i++) {
-						// Display the header of CSV (if its not a number)
-						if (!parseFloat(dataPoints[i][0].y)) {
-							title = dataPoints[i][0].y;
-						}
 						// Only keep y column
-						if (title !== 'y' && dataPoints.length > 2) {
+						if (dataPoints.length > 2 && dataPoints[i][0].y !== 'y') {
 							continue;
 						}
 
-						// Display Y chart
+						// Display acceleration chart
 						divId = cloneDiv('chartContainer', i);
 			           	var chart = new CanvasJS.Chart(divId, {
 						    title: {
-						         text: title,
+						         text: "Acceleration",
 						    },
 						    data: [{
 						         type: "line",
@@ -64,7 +59,7 @@ output {
 						divId = cloneDiv('chartContainer', i +1);
 			           	var chart = new CanvasJS.Chart(divId, {
 						    title: {
-						         text: title + " Velocity",
+						         text: "Velocity",
 						    },
 						    data: [{
 						         type: "line",
@@ -100,6 +95,7 @@ output {
             if (csvLines[i].length > 0) {
                 points = csvLines[i].split(",");
                 for (var p = 1; p < points.length; p++) {
+                	// Initialize object.
                 	if (typeof dataPoints[p] == "undefined") {
                 		dataPoints[p] = [];
                 	}
