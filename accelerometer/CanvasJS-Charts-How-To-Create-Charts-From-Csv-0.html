@@ -34,40 +34,32 @@ output {
 						}
 					}
 
-					// Populate charts.
-					for (var i = 1; i < dataPoints.length; i++) {
-						// Only keep y column
-						if (dataPoints.length > 2 && dataPoints[i][0].y !== 'y') {
-							continue;
-						}
+					// Display acceleration chart
+					divId = cloneDiv('chartContainer', 1);
+		           	var chart = new CanvasJS.Chart(divId, {
+					    title: {
+					         text: "Acceleration",
+					    },
+					    data: [{
+					         type: "line",
+					         dataPoints: dataPoints
+					      }]
+				    });
+				    chart.render();
 
-						// Display acceleration chart
-						divId = cloneDiv('chartContainer', i);
-			           	var chart = new CanvasJS.Chart(divId, {
-						    title: {
-						         text: "Acceleration",
-						    },
-						    data: [{
-						         type: "line",
-						         dataPoints: dataPoints[i]
-						      }]
-					    });
-					    chart.render();
-
-					    // Display velocity chart
-						var velocityPoints = calcVelocity(dataPoints[i]);
-						divId = cloneDiv('chartContainer', i +1);
-			           	var chart = new CanvasJS.Chart(divId, {
-						    title: {
-						         text: "Velocity",
-						    },
-						    data: [{
-						         type: "line",
-						         dataPoints: velocityPoints
-						      }]
-					    });
-					    chart.render();
-				     }
+				    // Display velocity chart
+					var velocityPoints = calcVelocity(dataPoints);
+					divId = cloneDiv('chartContainer', 2);
+		           	var chart = new CanvasJS.Chart(divId, {
+					    title: {
+					         text: "Velocity",
+					    },
+					    data: [{
+					         type: "line",
+					         dataPoints: velocityPoints
+					      }]
+				    });
+				    chart.render();
 		        };
 		        reader.readAsBinaryString(fileInput.files[0]);
 		    };
@@ -87,7 +79,8 @@ output {
     }
 
     function getDataPointsFromCSV(csv) {
-    	var x, y;
+    	var time, prevTime, accTime = 0;
+    	var acceleration = 0;
         var dataPoints = csvLines = points = [];
         csvLines = csv.split(/[\r?\n|\r|\n]+/);         
 	        
@@ -101,31 +94,54 @@ output {
                 	}
 
                 	// First line contains headers
-                	x = points[0];
-                	y = points[p];
+                	time = points[0];
+                	acceleration = points[p];
 
                 	// Other lines contain the float values
                 	if (i > 0) {
                 		// Convert dates to timestamp i.e. '2019/09/22 10:14:06.753'
-                		var myDate = new Date(x);
+                		var myDate = new Date(time);
 						var timestamp = myDate.getTime();
 						if (timestamp) {
 							ss = myDate.getSeconds();
 							ms = myDate.getMilliseconds();
-							x = ss.toString().padStart(2, '0') + '.' + ms.toString().padStart(3, '0');
+							time = ss.toString().padStart(2, '0') + '.' + ms.toString().padStart(3, '0');
 						}
 
-                		x = parseFloat(x);
-                		y = parseFloat(y*-1); // Invert Y data from iphone app
+                		time = parseFloat(time);
+                		acceleration = parseFloat(acceleration*-1); // Invert Y data from iphone app
                 	}
 
+					accTime = accTime + time - prevTime;
+
 	                dataPoints[p].push({ 
-	                    x: x,
-	                    y: y
+	                    x: time,
+	                    y: acceleration
 	                });
+
+	                prevTime = time;
     			}
             }
         }
+
+        // Keep only Y data
+        if (dataPoints.length > 2) {
+        	dataPoints = dataPoints[2];
+        }
+        else {
+        	dataPoints = dataPoints[1];
+        }
+
+        // Normalize time
+        var offsetTime = -1;
+        for (var i = 1; i < dataPoints.length; i++) {
+        	var currTime = dataPoints[i].x;
+        	if (offsetTime < 0) {
+        		offsetTime = currTime;
+        	}
+        	dataPoints[i].x = currTime - offsetTime;
+        }
+
         return dataPoints;
     }
 
@@ -140,7 +156,7 @@ output {
 			var prevTime = data[i-1].x;
 			velocity += (prevAcc + curAcc) / 2 * (time - prevTime) / 1000;
         	velocityPoints.push({ 
-                x: data[i].x,
+                x: time,
                 y: velocity
             });
 		}
