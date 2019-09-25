@@ -169,11 +169,38 @@ output {
     	var prevAcc = 0;
     	var prevTime = 0;
     	var velocity = 0;
+    	var peak = prevPeak = 0;
+    	var threshold = 12; // % this will be a potenciometer
+    	console.log('Threshold ' + threshold + '%');
 		for (i = 0; i < data.length; i++)
 		{
 			var curAcc = data[i].y; // Read Acc X
 			var time = data[i].x; // millis()
 			velocity += (prevAcc + curAcc) / 2 * (time - prevTime);
+
+			// Register peak
+			if (velocity > peak) {
+				peak = velocity;
+			}
+			// Detect drop
+			if (peak > velocity && peak > prevPeak) {
+				// Calc percentage
+				var perc = 100 - (velocity * 100 / peak);
+				if (perc > threshold) {
+					// Trigger sound
+					console.log('Time ' + time);
+					console.log('Peak ' + peak);
+					console.log('Velocity ' + velocity);
+					console.log('Calc perc ' + perc + '%');
+					console.log(' ');
+
+					// Store highest peak;
+					prevPeak = peak;
+
+					// Reset peak;
+					peak = velocity;
+				}
+			}
 
 			prevTime = time;
 			prevAcc = curAcc;
