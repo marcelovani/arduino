@@ -91,7 +91,8 @@ output {
 
     // Read csv and populate data
     function getDataPointsFromCSV(csv) {
-    	var time, prevTime, accTime = 0;
+    	var time = prevTime = accTime = 0;
+    	var offsetTime = -1;
     	var acceleration = 0;
         var dataPoints = csvLines = points = [];
         csvLines = csv.split(/[\r?\n|\r|\n]+/);         
@@ -99,59 +100,45 @@ output {
         for (var i = 0; i < csvLines.length; i++) {
             if (csvLines[i].length > 0) {
                 points = csvLines[i].split(",");
-                for (var p = 1; p < points.length; p++) {
-                	// Initialize object.
-                	if (typeof dataPoints[p] == "undefined") {
-                		dataPoints[p] = [];
-                	}
 
-                	// First line contains headers
-                	time = points[0];
-                	acceleration = points[p];
+                switch (points.length) {
+                	case 2:
+                		time = points[0];
+	                	acceleration = points[1];
+                		break
 
-                	// Other lines contain the float values
-                	if (i > 0) {
-                		// Convert dates to timestamp i.e. '2019/09/22 10:14:06.753'
-                		var myDate = new Date(time);
-						var timestamp = myDate.getTime();
-						if (timestamp) {
-							ss = myDate.getSeconds();
-							ms = myDate.getMilliseconds();
-							time = ss.toString().padStart(2, '0') + '.' + ms.toString().padStart(3, '0');
-						}
+                	case 4:
+	                	time = points[0];
+	                	// Extract only y form CSV with xyz
+	                	acceleration = points[2];
+                		break;
+                }
 
-                		time = parseFloat(time);
-                		acceleration = parseFloat(acceleration*-1); // Invert Y data from iphone app
-                	}
+        		// Convert dates to timestamp i.e. '2019/09/22 10:14:06.753'
+        		var myDate = new Date(time);
+				var timestamp = myDate.getTime();
+				if (timestamp) {
+					ss = myDate.getSeconds();
+					ms = myDate.getMilliseconds();
+					time = ss.toString().padStart(2, '0') + '.' + ms.toString().padStart(3, '0');
+				}
 
-					accTime = accTime + time - prevTime;
+        		time = parseFloat(time);
+        		if (time >= 0) {
+            		acceleration = parseFloat(acceleration*-1); // Invert Y data from iphone app
 
-	                dataPoints[p].push({ 
-	                    x: time,
+            		// Normalize time to make it start from 0
+		        	if (offsetTime < 0) {
+		        		offsetTime = time;
+		        	}
+
+	                dataPoints.push({ 
+	                    x: time - offsetTime,
 	                    y: acceleration
 	                });
+	            }
 
-	                prevTime = time;
-    			}
             }
-        }
-
-        // Keep only Y data
-        if (dataPoints.length > 2) {
-        	dataPoints = dataPoints[2];
-        }
-        else {
-        	dataPoints = dataPoints[1];
-        }
-
-        // Normalize time
-        var offsetTime = -1;
-        for (var i = 1; i < dataPoints.length; i++) {
-        	var currTime = dataPoints[i].x;
-        	if (offsetTime < 0) {
-        		offsetTime = currTime;
-        	}
-        	dataPoints[i].x = currTime - offsetTime;
         }
 
         return dataPoints;
