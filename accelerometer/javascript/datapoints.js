@@ -52,7 +52,8 @@ function getDataPointsFromCSV(csv) {
                 if (x <= maxTime) {
                     dataPoints.push({ 
                         x: x,
-                        y: acceleration
+                        y: acceleration,
+                        markerType: 'triangle'
                     });
                 }
             }
