@@ -1,0 +1,68 @@
+{
+  "name": "sma",
+  "description": "Calculate the simple moving average of an array.",
+  "version": "0.1.1",
+  "homepage": "https://github.com/doowb/sma",
+  "author": "Brian Woodward (https://doowb.com)",
+  "repository": "doowb/sma",
+  "bugs": {
+    "url": "https://github.com/doowb/sma/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "arr",
+    "arr-average",
+    "arr-avg",
+    "array",
+    "array-average",
+    "array-avg",
+    "average",
+    "average-arr",
+    "avg",
+    "avg-arr",
+    "avg-array",
+    "floating",
+    "moving",
+    "rolling",
+    "simple",
+    "simple-floating-average",
+    "simple-floating-avg",
+    "simple-moving-average",
+    "simple-moving-avg",
+    "simple-rolling-average",
+    "simple-rolling-avg",
+    "sma"
+  ],
+  "devDependencies": {
+    "gulp-format-md": "^0.1.12",
+    "mocha": "^3.2.0"
+  },
+  "verb": {
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "lint": {
+      "reflinks": true
+    },
+    "related": {
+      "list": [
+        "exponential-moving-average"
+      ]
+    }
+  }
+}
