@@ -10,7 +10,6 @@ function getDataPointsFromCSV(csv) {
     var dataPoints = [];
     var csvLines = [];
     var points = [];
-    var maxTime = 8; // 7s
     csvLines = csv.split(/[\r?\n|\r|\n]+/);         
         
     for (var i = 0; i < csvLines.length; i++) {
@@ -49,7 +48,7 @@ function getDataPointsFromCSV(csv) {
 	        	}
 
                 var x = time - offsetTime;
-                if (x <= maxTime) {
+                if (x <= maxSamples) {
                     dataPoints.push({ 
                         x: x,
                         y: acceleration,

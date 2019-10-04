@@ -23,6 +23,11 @@ output {
 
 <script type="text/javascript">
 //<![CDATA[
+    // The minimum acceleration to be considered.
+	var threshold = 0.08;
+	// The number of seconds to collect sample.
+	var maxSamples = 4;
+
     window.onload = function() {      
 		var fileInput = document.getElementById("csv"),
 		    readFile = function () {
@@ -36,9 +41,10 @@ output {
 					var velocityPoints = calcVelocity(dataPoints);
 					showVelocityChart(velocityPoints);
 
+					threshold = 0.1;
 					showSMAChart(velocityPoints, 3);
 
-					detectChange(dataPoints);
+					//detectChange(dataPoints);
 		        };
 		        reader.readAsBinaryString(fileInput.files[0]);
 		    };

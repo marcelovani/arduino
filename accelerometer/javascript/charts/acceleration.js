@@ -5,19 +5,21 @@ function showAccelerationChart(dataPoints) {
 	var divId = cloneElement('chartContainer');
    	var chart = new CanvasJS.Chart(divId, {
    		theme: "light2", // "light1", "light2", "dark1", "dark2"
-   		animationEnabled: true,
+   		animationEnabled: false,
 	    title: {
 	         text: "Acceleration",
 	    },
-    	axisX: {
-			interval: 1,
-			intervalType: "s"
+    	axisY: {
+			title: "Acceleration",
+			suffix: "g"
 		},
-		axisY:{
-			title: "Acceleration"
+    	axisX: {
+			title: "Time",
+			suffix: "s"
 		},
 	    data: [{
-	         type: "line",
+	         type: "spline",
+	         markerSize: 7,
 	         dataPoints: dataPoints
 	      }]
     });
