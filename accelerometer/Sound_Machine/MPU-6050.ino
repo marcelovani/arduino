@@ -1,5 +1,20 @@
 #include "Wire.h" // This library allows you to communicate with I2C devices.
 
+const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
+long accelerationX;  // Last read of acceleration
+long calibrationX;  // Calibration offset
+int16_t accelerationData[4]; // Store last 4 read data
+
+long getAccX()
+{
+  return accelerationX;
+}
+
+long getAccelerationData()
+{
+  return accelerationData;
+}
+
 // Calibrate accelerometer
 void calibrateACC()
 {
@@ -15,7 +30,7 @@ void calibrateACC()
     unsigned int count;
     count = 0;
     do {
-        readAcc();
+        readAccX();
         calibrationX = calibrationX + accelerationX;
         count++;
     } while(count!=0x0FF);            // 256 times
@@ -24,7 +39,7 @@ void calibrateACC()
 }
 
 // Read accelerometer
-void readAcc()
+void readAccX()
 {
     Wire.beginTransmission(MPU_ADDR);
     Wire.write(0x3B);
