@@ -2,7 +2,7 @@
 
 // Display simple moving average chart
 function showSMAChart(dataPoints, samples) {
-	var smaPoints = calcSMA(dataPoints, samples);
+	var smaPoints = detectChange(dataPoints, samples);
 	var divId = cloneElement('chartContainer');
    	var chart = new CanvasJS.Chart(divId, {
    		theme: "light2", // "light1", "light2", "dark1", "dark2"
@@ -27,7 +27,7 @@ function showSMAChart(dataPoints, samples) {
     chart.render();
 }
 
-function calcSMA(data, samples) {
+function detectChange(data, samples) {
 	var tmp = [];
 	var smaData = [];
 	var smaPoints = [];

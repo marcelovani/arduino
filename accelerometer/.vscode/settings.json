@@ -9,6 +9,10 @@
         "map": "cpp",
         "set": "cpp",
         "unordered_map": "cpp",
-        "hashtable": "cpp"
+        "hashtable": "cpp",
+        "array": "cpp",
+        "iterator": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     }
 }

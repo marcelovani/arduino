@@ -20,3 +20,8 @@ void ledOff()
 {
     digitalWrite(LED, LOW);
 }
+
+// Display LED bar depending on Acceleration
+void ledBar() {
+  
+}

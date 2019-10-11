@@ -11,25 +11,20 @@ void setup()
 
     // Accelerometer
     calibrateACC();
+
 }
 
 void loop()
 {
     readSmaThreshold();
-    readAccX();
-    calcSma();
+    readAccX(5);
+    detectChange();
     plot();
 }
 
 // Plotter
 void plot()
 {
-    //time = millis() / 1000;
-    //Serial.print(time);
-    //Serial.print(',');
-    Serial.print(getAccX());
-    Serial.print(',');
-    Serial.print(calcSma());
-    Serial.print(',');
+    Serial.print(getSma());
     Serial.println();
 }
