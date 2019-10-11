@@ -1,34 +1,16 @@
 #include "Wire.h" // This library allows you to communicate with I2C devices.
-#include <Statistic.h>
-
-Statistic dataStats;
 
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
-
-long accelerationX;  // Last read of acceleration
-long calibrationX;  // Calibration offset
-
-int range=50; // Number of range to collect @todo: make it configurable
+int accelerationX;  // Last read of acceleration
+int calibrationX;  // Calibration offset
 int accelerationData[100]; // Storage for the collection
 
-int d; // 10ms delay beween readings @todo: make it configurable
-int sma; // SMA
-
-long getSma()
-{
-  return sma;
-}
-
-long getAccX()
+int getAccX()
 {
   return accelerationX;
 }
 
-int getRange() {
-  return range;
-}
-
-int16_t getAccelerationData()
+int * getAccelerationData()
 {
   return accelerationData;
 }
@@ -36,9 +18,7 @@ int16_t getAccelerationData()
 // Calibrate accelerometer
 void calibrateACC()
 {
-    d=1; // Set a small delay
-
-    // Initialize
+    // Initialize board
     Serial.begin(9600);
     Wire.begin();
     Wire.beginTransmission(MPU_ADDR); // Begins a transmission to the I2C slave (GY-521 board)
@@ -56,7 +36,7 @@ void calibrateACC()
     unsigned int count;
     count = 0;
     do {
-        readAccX(d);
+        readAccX();
         calibrationX = calibrationX + accelerationX;
         count++;
     } while(count!=0x0FF);            // 256 times
@@ -65,9 +45,10 @@ void calibrateACC()
 }
 
 // Read accelerometer
-// Param d The delay between readings
-void readAccX(int d)
+void readAccX()
 {
+    int d = getDelay();
+  
     delay(d); // Add a bit of delay between readings
 
     Wire.beginTransmission(MPU_ADDR);
@@ -78,36 +59,18 @@ void readAccX(int d)
     accelerationX = (Wire.read() << 8 | Wire.read()) / 2;
 
     // Push to the end of the array
-    int i=0;
-    while(i < range) {
-      accelerationData[i] = accelerationData[i+1];
-      i++;
-    }
-    accelerationData[i] = accelerationX;
+    pushAccData(accelerationX);
 
     Wire.endTransmission(true);
 }
 
-// Calculate the simple moving accelaration
-int calcSma() {
-  dataStats.clear();
-
-  // Update stats.
-  int i=0;
-  while(i < range) {
-    dataStats.add(accelerationData[i]);
-    i++; 
-  }
-
-  return dataStats.average();
-}
-
-void detectChange() {
-  sma = calcSma();
-  if (sma < -120) {
-    ledOn();
-  }
-  else {
-    ledOff();
-  }
+// Push to the end of the array
+void pushAccData(int acc) {
+    int r = getRange();
+    int i=0;
+    while(i < r) {
+      accelerationData[i] = accelerationData[i+1];
+      i++;
+    }
+    accelerationData[i] = acc;
 }

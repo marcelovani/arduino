@@ -16,8 +16,7 @@ void setup()
 
 void loop()
 {
-    readSmaThreshold();
-    readAccX(5);
+    readAccX();
     detectChange();
     plot();
 }
