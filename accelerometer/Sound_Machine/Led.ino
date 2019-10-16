@@ -26,12 +26,14 @@ void ledOff()
 
 // Display LED bar depending on Acceleration
 void ledBar() {
-  //Serial.println("LED: ");
+  Serial.print("\tLED: ");
   if (ledStatus == 1) {
-    Serial.print(getCalibrationX() + getThreshold());
+    Serial.print("ON ");
+    //Serial.print(getCalibrationX() + getThreshold());
   }
   else {
-    Serial.print(getCalibrationX());
+    Serial.print("OFF ");
+    //Serial.print(getCalibrationX());
   }
-  Serial.println(", ");
+  //Serial.println(", ");
 }

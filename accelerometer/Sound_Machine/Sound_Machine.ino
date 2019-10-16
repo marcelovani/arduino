@@ -18,9 +18,9 @@ void setup()
 void loop()
 {
     readAccX();
-    //calcSma(); // temp
-    //detectChange(); //temp
-    //plot();
+    calcSma(); // temp
+    detectChange(); //temp
+    plot();
 }
 
 // Plotter

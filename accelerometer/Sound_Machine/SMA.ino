@@ -6,7 +6,15 @@
 //Statistic smaStats;
 int smaData[100] = {}; // Storage SMA calculations
 
-int * getSma()
+// Return the current SMA.
+int getSma()
+{
+  int s = getSamples();
+  return smaData[s-1];
+}
+
+// Return the full data set.
+int * getSmaData()
 {
   return smaData;
 }
@@ -29,152 +37,104 @@ void calcSma() {
   int s = getSamples();
   int r = getRange();
 
-  float sum = 0;
-  //float avg = 0;
+  int sum = 0;
+  int avg = 0;
 
-  // Update stats.
-  int i = 0;
+  // Start from total of samples minus the range.
+  // i.e. Samples=9, Range=3
+  // 1, 2, 3, 4, 5, 6, 7, 8, 9
+  //                   ^  ^  ^
+  int i = s - r;
   while(i < s) {
-    //if (data[i] != 0) {
-
-      Serial.print(i);
-      Serial.println("");
-
-      // Calcumlate SMA for the range
-      sum = 0;
-      int t = r;
-      while(t > 0) {
-        int pos = r - t + i;
-        Serial.print(pos);
-        Serial.print("=");
-        int val = data[pos];
-        // Don't add values below 0
-        if (val <= 0) {
-          val = data[pos-1];
-        }
-        Serial.print(val);
-        Serial.print(" ");
-        sum += val;
-        t--;
-      }
-      float avg = sum / r;
-      smaData[i] = avg;
-
-      Serial.print(" SUM=");
-      Serial.print(sum);
-      Serial.print(" AVG=");
-      Serial.print(avg);
-      Serial.println("");
-      //sum = data[i + r - 1] + data[i + r - 2] + data[i + r - 3] + data[i + r - 4];
-//      avg = sum / r;
-//      Serial.print(i);
-//      Serial.print(", ");
-//      Serial.print(data[i]);
-//      Serial.print(", ");
-//      Serial.print(smaData[i]);
-//      Serial.println(", ");
-//      Serial.println(avg);
-    //}
-    i++; 
+    int val = data[i];
+    sum += val;
+    i++;
   }
-//  Serial.print(smaData[r-1]);
-//  Serial.print(", ");
+  avg = sum / r;
+
+  char buff[6];
+  sprintf(buff, "%3d", avg);
+  Serial.print(String("AVG: ") + buff);
+
+  // Push to the end of the array
+  pushSmaData(avg);    
+}
+
+// Push to the end of the array
+void pushSmaData(int sma) {
+    int s = getSamples();
+    int i = 0;
+    while (i < s) {
+      // Move from bottom to top.
+      smaData[i] = smaData[i+1];
+      i++;
+    }
+    // Set bottom value.
+    smaData[s-1] = sma;
 }
 
 // Algorithm to detect changes and take actions
 void detectChange() {
-//calcSma();//temp
-
-  int r = 10;//getRange(); //temp
+  int s = getSamples();
 	int threshold = getThreshold();
- 
- //threshold = 8;//temp
 
-  String label = "";
+  String playLabel = "STOP";
 	short int peak = 0;
 	short int perc = 0;
-	short int curr = 0;
-	short int prev = 0;
-	short int next = 0;
 	short int diff = 0;
 	short int playSound = 0;
 	short int firstUp = -9999;
-  short int i=0;
-//  Serial.println(" ");
-//  Serial.println("Detect change");
-  while(i <= r) {
-    //delay(10);
-    curr = smaData[i];
 
-//    Serial.print("Curr: ");
-//    Serial.print(curr);
-//    Serial.print(",");
+  int prev = smaData[s-3];
+  int curr = smaData[s-2];
+  int next = smaData[s-1];
 
-		// Detect change.
-		if (i > 0) {
-			prev = smaData[i-1];
-			if (i < r) {
-				next = smaData[i+1];
-			}
+	// Detect change.
+	if (curr > prev) {
+    // Perc is used to display LEDs and to calculate the volume.
+    diff = curr - threshold;
+    perc = diff / threshold * 100;
 
-			if (curr > prev) {
-				// Going up
-				if (firstUp == -9999) {
-					firstUp = curr;
-					playSound = 0;
-          ledOff();
-				}
-
-				// Perc is used to display LEDs and to calculate the volume.
-				if (curr >= threshold) {
-					diff = curr - threshold;
-					perc = diff / threshold * 100;
-					label = perc + '%';
-          //Serial.print("Perc: ");
-          //Serial.println(perc);
-          //Serial.print(",");
-          //Serial.println('%');
-				}
-        else {
-          //Serial.println('^');
-        }
-
-				// Detect peak
-				if (curr > next) {
-					if (curr >= threshold) {
-						peak = curr;
-            //Serial.print("Peak: ");
-						//Serial.println(peak);
-					}
-				}
-			}
-			else if (curr == prev) {
-				// Sliding.
-        //Serial.println(">");
-			}
-			else {
-				// Going down.
-				if (playSound == 0) {
-          //Serial.println("PLAY");
-
-					// Play sound
-					playSound = 1;
-          ledOn();
-
-					firstUp = -9999;;
-				}
-				else {
-          //Serial.println("-");
-				}
-				peak = next;
-			}
-		}
-		else {
-			// Initialize peak
-			peak = curr;
+		// Going up
+		if (firstUp == -9999) {
+			firstUp = curr;
+			playSound = 0;
+      ledOff();
 		}
 
-    i++; 
-    ledBar();
-  }
+		// Detect peak
+		if (curr > next) {
+			if (curr >= threshold) {
+				peak = curr;
+			}
+		}
+	}
+	else if (curr == prev) {
+		// Sliding.
+	}
+	else if (peak > curr) {
+		// Going down.
+		if (playSound == 0) {
+      playLabel = "PLAY";
+      
+			// Play sound
+			playSound = 1;
+      ledOn();
+
+			firstUp = -9999;;
+		}
+		peak = next;
+	}
+  
+  char buff[6];
+  
+  sprintf(buff, "%3d", peak);
+  Serial.print(String("\tPeak: ") + buff);
+
+  sprintf(buff, "%3d", perc);
+  Serial.print(String("\tPerc: ") + buff + String( "%"));
+  
+  ledBar();
+  Serial.print("\t" + playLabel);
+
 }
