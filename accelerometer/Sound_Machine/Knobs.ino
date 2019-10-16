@@ -1,9 +1,9 @@
 
 // The minimum value to be considered a good acceleration
-int getThreshold()
+float getThreshold()
 {
     // @todo: Read from knob
-    return 0.8;
+    return 500;
 }
 
 // Number of range to collect @todo: make it configurable
@@ -12,7 +12,7 @@ int getRange() {
     return 50;
 }
 
-// The delay betwwn acceleration readings. Useful to get a smoother line
+// The delay between acceleration readings. Useful to get a smoother line
 int getDelay() {
     // @todo: Read from knob
     return 5;

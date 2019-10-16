@@ -1,6 +1,7 @@
 #include "Wire.h" // This library allows you to communicate with I2C devices.
 
 int LED = 13; // Led number
+bool ledStatus = 0;
 
 void setupLED()
 {
@@ -13,15 +14,24 @@ void setupLED()
 void ledOn()
 {
     digitalWrite(LED, HIGH);
+    ledStatus = 1;
 }
 
 // LED off
 void ledOff()
 {
     digitalWrite(LED, LOW);
+    ledStatus = 0;
 }
 
 // Display LED bar depending on Acceleration
 void ledBar() {
-  
+  //Serial.println("LED: ");
+  if (ledStatus == 1) {
+    Serial.print(getCalibrationX() + getThreshold());
+  }
+  else {
+    Serial.print(getCalibrationX());
+  }
+  Serial.println(", ");
 }

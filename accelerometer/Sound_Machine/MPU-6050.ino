@@ -3,7 +3,12 @@
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
 int accelerationX;  // Last read of acceleration
 int calibrationX;  // Calibration offset
-int accelerationData[100]; // Storage for the collection
+int accelerationData[100] = {}; // Storage for the collection
+
+int getCalibrationX()
+{
+  return calibrationX;
+}
 
 int getAccX()
 {
@@ -12,6 +17,33 @@ int getAccX()
 
 int * getAccelerationData()
 {
+  
+// temp;
+//  accelerationData[0] = 0.004100*100;
+//  accelerationData[1] = 0.007197*100;
+//  accelerationData[2] = 0.011027*100;
+//  accelerationData[3] = 0.066737*100;
+//  accelerationData[4] = 0.123896*100;
+//  accelerationData[5] = 0.164286*100;
+//  accelerationData[6] = 0.144007*100;
+//  accelerationData[7] = 0.184352*100;
+//  accelerationData[8] = 0.160792*100;
+//  accelerationData[9] = 0.226908*100;
+//  accelerationData[10] = 0.122142*100;
+//  accelerationData[11] = 0.037059*100;
+//  accelerationData[12] = 0.091420*100;
+
+//  accelerationData[0] = 1;
+//  accelerationData[1] = 2;
+//  accelerationData[2] = 3;
+//  accelerationData[3] = 4;
+//  accelerationData[4] = 5;
+//  accelerationData[5] = 6;
+//  accelerationData[6] = 7;
+//  accelerationData[7] = 8;
+//  accelerationData[8] = 9;
+
+  
   return accelerationData;
 }
 
@@ -28,20 +60,29 @@ void calibrateACC()
 
     // Acc config
     Wire.beginTransmission(MPU_ADDR);
-    Wire.write(0x1C);             //We want to write to the ACCEL_CONFIG register
-    Wire.write(0x10);             //Set the register bits as 00010000 (+/- 8g full scale range)
+    Wire.write(0x1C);             // We want to write to the ACCEL_CONFIG register
+    Wire.write(0x10);             // Set the register bits as 00010000 (+/- 8g full scale range)
     Wire.endTransmission(true);
     
-    // Calibrate
-    unsigned int count;
-    count = 0;
-    do {
-        readAccX();
-        calibrationX = calibrationX + accelerationX;
-        count++;
-    } while(count!=0x0FF);            // 256 times
-
-    calibrationX = calibrationX >> 8;     // division between 256
+    // Calibrate to have mainly positive readings
+    int r = getRange();
+    int i = 0;
+    int sum = 0;
+    int avg = 0;
+    while (i < r) {
+      readAccX(); //temp
+      calcSma();
+      int * data = getSma();
+      sum += data[i];
+      i++;
+    }
+    avg = sum/(r-1);
+    if (avg < 0) {
+      calibrationX = avg * -1;
+    }
+    Serial.println();
+    Serial.println("Calculating offset");
+    Serial.println(calibrationX);
 }
 
 // Read accelerometer
@@ -59,7 +100,7 @@ void readAccX()
     accelerationX = (Wire.read() << 8 | Wire.read()) / 2;
 
     // Push to the end of the array
-    pushAccData(accelerationX);
+    pushAccData(accelerationX + calibrationX);
 
     Wire.endTransmission(true);
 }
@@ -67,10 +108,14 @@ void readAccX()
 // Push to the end of the array
 void pushAccData(int acc) {
     int r = getRange();
-    int i=0;
-    while(i < r) {
-      accelerationData[i] = accelerationData[i+1];
+    int i = 0;
+    while (i < r) {
+      if (accelerationData[i+1] != 0) {
+        accelerationData[i] = accelerationData[i+1];
+      }
+      else {
+        accelerationData[i] = acc;
+      }
       i++;
     }
-    accelerationData[i] = acc;
 }

@@ -12,18 +12,31 @@ void setup()
     // Accelerometer
     calibrateACC();
 
+//detectChange(); //temp
 }
 
 void loop()
 {
-    readAccX();
+    readAccX(); //temp
+    calcSma();
     detectChange();
-    plot();
+    //plot();
 }
 
 // Plotter
 void plot()
 {
-    Serial.print(getSma());
-    Serial.println();
+//    Serial.print(getThreshold());
+//    Serial.print(",");
+
+//    int r = 30;//getRange();
+//    int i = 0;
+//    int * data = getSma();
+//    while(i < r) {
+//      Serial.print(data[i]);
+//      Serial.print(",");
+//      i++;
+//    }
+//    
+    Serial.println("");
 }
