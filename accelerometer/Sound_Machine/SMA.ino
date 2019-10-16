@@ -1,9 +1,9 @@
 /*
  * Calculates the simple moving average
  */
-#include <Statistic.h>
+//#include <Statistic.h>
 
-Statistic smaStats;
+//Statistic smaStats;
 int smaData[100] = {}; // Storage SMA calculations
 
 int * getSma()
@@ -26,31 +26,49 @@ int * getSma()
  */
 void calcSma() {
   int * data = getAccelerationData();
-  int t = getRange(); // Total rename to samples
-  int r = 4; // Range @todo make configurable
-  
+  int s = getSamples();
+  int r = getRange();
+
   float sum = 0;
   //float avg = 0;
 
   // Update stats.
   int i = 0;
-  while(i < t) {
+  while(i < s) {
     //if (data[i] != 0) {
+
+      Serial.print(i);
+      Serial.println("");
 
       // Calcumlate SMA for the range
       sum = 0;
-      int s = 0;
-      while(s < r) {
-        int pos = i + r - s - 1;
-        //Serial.print(pos);
-        //Serial.print(", ");
-        sum += data[pos];
-        s++;
+      int t = r;
+      while(t > 0) {
+        int pos = r - t + i;
+        Serial.print(pos);
+        Serial.print("=");
+        int val = data[pos];
+        // Don't add values below 0
+        if (val <= 0) {
+          val = data[pos-1];
+        }
+        Serial.print(val);
+        Serial.print(" ");
+        sum += val;
+        t--;
       }
-      smaData[i] = sum / r;
+      float avg = sum / r;
+      smaData[i] = avg;
 
+      Serial.print(" SUM=");
+      Serial.print(sum);
+      Serial.print(" AVG=");
+      Serial.print(avg);
+      Serial.println("");
       //sum = data[i + r - 1] + data[i + r - 2] + data[i + r - 3] + data[i + r - 4];
 //      avg = sum / r;
+//      Serial.print(i);
+//      Serial.print(", ");
 //      Serial.print(data[i]);
 //      Serial.print(", ");
 //      Serial.print(smaData[i]);
@@ -89,8 +107,8 @@ void detectChange() {
     curr = smaData[i];
 
 //    Serial.print("Curr: ");
-    Serial.print(curr);
-    Serial.print(",");
+//    Serial.print(curr);
+//    Serial.print(",");
 
 		// Detect change.
 		if (i > 0) {

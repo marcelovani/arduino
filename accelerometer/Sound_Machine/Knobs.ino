@@ -6,10 +6,17 @@ float getThreshold()
     return 500;
 }
 
-// Number of range to collect @todo: make it configurable
+
+// Number of samples to collect
+int getSamples() {
+    // @todo: Read from knob
+    return 9;
+}
+
+// The range used to calculate SMA
 int getRange() {
     // @todo: Read from knob
-    return 50;
+    return 4;
 }
 
 // The delay between acceleration readings. Useful to get a smoother line

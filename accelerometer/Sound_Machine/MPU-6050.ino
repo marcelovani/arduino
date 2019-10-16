@@ -33,15 +33,15 @@ int * getAccelerationData()
 //  accelerationData[11] = 0.037059*100;
 //  accelerationData[12] = 0.091420*100;
 
-//  accelerationData[0] = 1;
-//  accelerationData[1] = 2;
-//  accelerationData[2] = 3;
-//  accelerationData[3] = 4;
-//  accelerationData[4] = 5;
-//  accelerationData[5] = 6;
-//  accelerationData[6] = 7;
-//  accelerationData[7] = 8;
-//  accelerationData[8] = 9;
+  accelerationData[0] = 1;
+  accelerationData[1] = 2;
+  accelerationData[2] = 3;
+  accelerationData[3] = 4;
+  accelerationData[4] = 5;
+  accelerationData[5] = 6;
+  accelerationData[6] = 7;
+  accelerationData[7] = 8;
+  accelerationData[8] = 9;
 
   
   return accelerationData;
@@ -65,18 +65,18 @@ void calibrateACC()
     Wire.endTransmission(true);
     
     // Calibrate to have mainly positive readings
-    int r = getRange();
+    int s = getSamples();
     int i = 0;
     int sum = 0;
     int avg = 0;
-    while (i < r) {
+    while (i < s) {
       readAccX(); //temp
       calcSma();
       int * data = getSma();
       sum += data[i];
       i++;
     }
-    avg = sum/(r-1);
+    avg = sum/(s-1);
     if (avg < 0) {
       calibrationX = avg * -1;
     }
@@ -107,9 +107,9 @@ void readAccX()
 
 // Push to the end of the array
 void pushAccData(int acc) {
-    int r = getRange();
+    int s = getSamples();
     int i = 0;
-    while (i < r) {
+    while (i < s) {
       if (accelerationData[i+1] != 0) {
         accelerationData[i] = accelerationData[i+1];
       }
