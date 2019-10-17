@@ -52,9 +52,11 @@ void calcSma() {
   }
   avg = sum / r;
 
-  char buff[6];
-  sprintf(buff, "%3d", avg);
-  Serial.print(String("AVG: ") + buff);
+  //if (avg > 0) {
+    char buff[6];
+    sprintf(buff, "%3d", avg);
+    Serial.print(String("AVG: ") + buff);
+  //}
 
   // Push to the end of the array
   pushSmaData(avg);    
@@ -74,26 +76,29 @@ void pushSmaData(int sma) {
 }
 
 // Algorithm to detect changes and take actions
+short int firstUp = -9999;
+short int peak = 0;
+float perc = 0;
+short int diff = 0;
+short int playSound = 0;
+
 void detectChange() {
-  int s = getSamples();
-	int threshold = getThreshold();
+  short int s = getSamples();
+	float threshold = getThreshold();
 
-  String playLabel = "STOP";
-	short int peak = 0;
-	short int perc = 0;
-	short int diff = 0;
-	short int playSound = 0;
-	short int firstUp = -9999;
+  short int prev = smaData[s-3];
+  short int curr = smaData[s-2];
+  short int next = smaData[s-1];
 
-  int prev = smaData[s-3];
-  int curr = smaData[s-2];
-  int next = smaData[s-1];
+  String playLabel = "";
 
-	// Detect change.
 	if (curr > prev) {
     // Perc is used to display LEDs and to calculate the volume.
+    perc = 0;
     diff = curr - threshold;
-    perc = diff / threshold * 100;
+    if (diff > 0) {
+      perc = diff / threshold * 100;
+    }
 
 		// Going up
 		if (firstUp == -9999) {
@@ -109,10 +114,7 @@ void detectChange() {
 			}
 		}
 	}
-	else if (curr == prev) {
-		// Sliding.
-	}
-	else if (peak > curr) {
+	else if (curr > threshold && peak > curr) {
 		// Going down.
 		if (playSound == 0) {
       playLabel = "PLAY";
@@ -121,7 +123,7 @@ void detectChange() {
 			playSound = 1;
       ledOn();
 
-			firstUp = -9999;;
+			firstUp = -9999;
 		}
 		peak = next;
 	}
@@ -131,8 +133,12 @@ void detectChange() {
   sprintf(buff, "%3d", peak);
   Serial.print(String("\tPeak: ") + buff);
 
-  sprintf(buff, "%3d", perc);
-  Serial.print(String("\tPerc: ") + buff + String( "%"));
+  sprintf(buff, "%3d", diff);
+  Serial.print(String("\tDiff: ") + buff);
+  
+  Serial.print("\tPerc: ");
+  Serial.print(perc);
+  //Serial.print("%");
   
   ledBar();
   Serial.print("\t" + playLabel);
