@@ -79,9 +79,10 @@ void calibrateACC()
     if (calibrationX < 0) {
       calibrationX = calibrationX * -1;
     }
-    Serial.println();
-    Serial.println("Calculating offset");
-    Serial.println(calibrationX);
+    // @todo if the inclination changes for some period, the calibration should be re-done
+//    Serial.println();
+//    Serial.println("Calculating offset");
+//    Serial.println(calibrationX);
 }
 
 // Read accelerometer

@@ -5,12 +5,12 @@
 
 //Statistic smaStats;
 int smaData[100] = {}; // Storage SMA calculations
+int sma = 0;
 
 // Return the current SMA.
 int getSma()
 {
-  int s = getSamples();
-  return smaData[s-1];
+  return sma;
 }
 
 // Return the full data set.
@@ -52,18 +52,16 @@ void calcSma() {
   }
   avg = sum / r;
 
-  //if (avg > 0) {
-    char buff[6];
-    sprintf(buff, "%3d", avg);
-    Serial.print(String("AVG: ") + buff);
-  //}
+//  char buff[6];
+//  sprintf(buff, "%3d", avg);
+//  Serial.print(String("AVG: ") + buff);
 
   // Push to the end of the array
   pushSmaData(avg);    
 }
 
 // Push to the end of the array
-void pushSmaData(int sma) {
+void pushSmaData(int value) {
     int s = getSamples();
     int i = 0;
     while (i < s) {
@@ -72,6 +70,7 @@ void pushSmaData(int sma) {
       i++;
     }
     // Set bottom value.
+    sma = value;
     smaData[s-1] = sma;
 }
 
@@ -116,31 +115,36 @@ void detectChange() {
 	}
 	else if (curr > threshold && peak > curr) {
 		// Going down.
-		if (playSound == 0) {
+		if (playSound == 0 && isPlaying() == false) {
+      //@todo check if DFP is not playing
       playLabel = "PLAY";
       
 			// Play sound
+      play();
 			playSound = 1;
       ledOn();
-
 			firstUp = -9999;
 		}
 		peak = next;
 	}
-  
-  char buff[6];
-  
-  sprintf(buff, "%3d", peak);
-  Serial.print(String("\tPeak: ") + buff);
 
-  sprintf(buff, "%3d", diff);
-  Serial.print(String("\tDiff: ") + buff);
-  
-  Serial.print("\tPerc: ");
+  Serial.print(getSma());
+  Serial.print(",");
   Serial.print(perc);
+  Serial.print(",");
+
+//  char buff[6];
+//  sprintf(buff, "%3d", peak);
+//  Serial.print(String("\tPeak: ") + buff);
+//
+//  sprintf(buff, "%3d", diff);
+//  Serial.print(String("\tDiff: ") + buff);
+//  
+//  Serial.print("\tPerc: ");
+//  Serial.print(perc);
   //Serial.print("%");
   
   ledBar();
-  Serial.print("\t" + playLabel);
+//  Serial.print("\t" + playLabel);
 
 }
