@@ -25,7 +25,7 @@ void ledOff()
 }
 
 // Display LED bar depending on Acceleration
-void ledBar() {
+void ledBar(float perc) {
   //Serial.print("\tLED: ");
   if (ledStatus == 1) {
     //Serial.print("ON ");

@@ -1,9 +1,16 @@
-/*
- * Calculates the simple moving average
+/**
+ * Calculate the simple moving average of an array. A new array is returned with the average
+ * of each range of elements. A range will only be calculated when it contains enough elements to fill the range.
+ *
+ * sma([1, 2, 3, 4, 5, 6, 7, 8, 9], 4);
+ * //=> [ '2.50', '3.50', '4.50', '5.50', '6.50', '7.50' ]
+ * //=>   │       │       │       │       │       └─(6+7+8+9)/4
+ * //=>   │       │       │       │       └─(5+6+7+8)/4
+ * //=>   │       │       │       └─(4+5+6+7)/4
+ * //=>   │       │       └─(3+4+5+6)/4
+ * //=>   │       └─(2+3+4+5)/4
+ * //=>   └─(1+2+3+4)/4
  */
-//#include <Statistic.h>
-
-//Statistic smaStats;
 int smaData[100] = {}; // Storage SMA calculations
 int sma = 0;
 
@@ -19,18 +26,8 @@ int * getSmaData()
   return smaData;
 }
 
-/**
- * Calculate the simple moving average of an array. A new array is returned with the average
- * of each range of elements. A range will only be calculated when it contains enough elements to fill the range.
- *
- * sma([1, 2, 3, 4, 5, 6, 7, 8, 9], 4);
- * //=> [ '2.50', '3.50', '4.50', '5.50', '6.50', '7.50' ]
- * //=>   │       │       │       │       │       └─(6+7+8+9)/4
- * //=>   │       │       │       │       └─(5+6+7+8)/4
- * //=>   │       │       │       └─(4+5+6+7)/4
- * //=>   │       │       └─(3+4+5+6)/4
- * //=>   │       └─(2+3+4+5)/4
- * //=>   └─(1+2+3+4)/4
+/*
+ * Calculates the simple moving average
  */
 void calcSma() {
   int * data = getAccelerationData();
@@ -144,7 +141,6 @@ void detectChange() {
 //  Serial.print(perc);
   //Serial.print("%");
   
-  ledBar();
+  ledBar(perc);
 //  Serial.print("\t" + playLabel);
-
 }

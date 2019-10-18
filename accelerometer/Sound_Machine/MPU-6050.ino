@@ -17,37 +17,22 @@ int getAccX()
 
 int * getAccelerationData()
 {
-  
-// temp;
-//  accelerationData[0] = 0.004100*100;
-//  accelerationData[1] = 0.007197*100;
-//  accelerationData[2] = 0.011027*100;
-//  accelerationData[3] = 0.066737*100;
-//  accelerationData[4] = 0.123896*100;
-//  accelerationData[5] = 0.164286*100;
-//  accelerationData[6] = 0.144007*100;
-//  accelerationData[7] = 0.184352*100;
-//  accelerationData[8] = 0.160792*100;
-//  accelerationData[9] = 0.226908*100;
-//  accelerationData[10] = 0.122142*100;
-//  accelerationData[11] = 0.037059*100;
-//  accelerationData[12] = 0.091420*100;
-
-//  accelerationData[0] = 1;
-//  accelerationData[1] = 2;
-//  accelerationData[2] = 3;
-//  accelerationData[3] = 4;
-//  accelerationData[4] = 5;
-//  accelerationData[5] = 6;
-//  accelerationData[6] = 7;
-//  accelerationData[7] = 8;
-//  accelerationData[8] = 9;
-
+  //  Test data
+  //  accelerationData[0] = 1;
+  //  accelerationData[1] = 2;
+  //  accelerationData[2] = 3;
+  //  accelerationData[3] = 4;
+  //  accelerationData[4] = 5;
+  //  accelerationData[5] = 6;
+  //  accelerationData[6] = 7;
+  //  accelerationData[7] = 8;
+  //  accelerationData[8] = 9;
   
   return accelerationData;
 }
 
 // Calibrate accelerometer
+// @todo if the inclination changes for some period, the calibration should be re-done
 void calibrateACC()
 {
     // Initialize board
@@ -65,24 +50,16 @@ void calibrateACC()
     Wire.endTransmission(true);
     
     // Calibrate to have mainly positive readings
-//    int s = getSamples();
     int i = 0;
-//    int sum = 0;
-//    int avg = 0;
     while (i < 100) {
       readAccX(); //temp
       calcSma();
       i++;
     }
-//    int * data = getSma();
     calibrationX = getSma();
     if (calibrationX < 0) {
       calibrationX = calibrationX * -1;
     }
-    // @todo if the inclination changes for some period, the calibration should be re-done
-//    Serial.println();
-//    Serial.println("Calculating offset");
-//    Serial.println(calibrationX);
 }
 
 // Read accelerometer
