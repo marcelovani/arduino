@@ -23,20 +23,7 @@ void loop()
     plot();
 }
 
-// Plotter
 void plot()
 {
-//    Serial.print(getThreshold());
-//    Serial.print(",");
-
-//    int r = 30;//getRange();
-//    int i = 0;
-//    int * data = getSma();
-//    while(i < r) {
-//      Serial.print(data[i]);
-//      Serial.print(",");
-//      i++;
-//    }
-//    
     Serial.println("");
 }
