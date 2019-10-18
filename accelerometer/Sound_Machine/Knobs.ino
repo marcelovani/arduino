@@ -3,7 +3,7 @@
 float getThreshold()
 {
     // @todo: Read from knob
-    int t = 200;
+    float t = 200;
     Serial.print(t);
     Serial.print(",");
 
@@ -12,9 +12,9 @@ float getThreshold()
 
 
 // Number of samples to collect
-int getSamples() {
+short int getSamples() {
     // @todo: Read from knob
-    int s = 20;
+    short int s = 10;
     Serial.print(s);
     Serial.print(",");
 
@@ -22,9 +22,9 @@ int getSamples() {
 }
 
 // The range used to calculate SMA
-int getRange() {
+short int getRange() {
     // @todo: Read from knob
-    int r = 10;
+    short int r = 4;
     Serial.print(r);
     Serial.print(",");
 
@@ -32,9 +32,9 @@ int getRange() {
 }
 
 // The delay between acceleration readings. Useful to get a smoother line
-int getDelay() {
+short int getDelay() {
     // @todo: Read from knob
-    int d = 3;
+    short int d = 3;
     Serial.print(d);
     Serial.print(",");
 

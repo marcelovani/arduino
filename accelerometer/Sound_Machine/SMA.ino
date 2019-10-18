@@ -11,7 +11,7 @@
  * //=>   │       └─(2+3+4+5)/4
  * //=>   └─(1+2+3+4)/4
  */
-int smaData[100] = {}; // Storage SMA calculations
+int smaData[20] = {}; // Storage SMA calculations
 int sma = 0;
 
 // Return the current SMA.
@@ -31,20 +31,18 @@ int * getSmaData()
  */
 void calcSma() {
   int * data = getAccelerationData();
-  int s = getSamples();
-  int r = getRange();
-
-  int sum = 0;
-  int avg = 0;
+  short int s = getSamples();
+  short int r = getRange();
+  short int sum = 0;
+  short int avg = 0;
 
   // Start from total of samples minus the range.
   // i.e. Samples=9, Range=3
   // 1, 2, 3, 4, 5, 6, 7, 8, 9
   //                   ^  ^  ^
-  int i = s - r;
+  short int i = s - r;
   while(i < s) {
-    int val = data[i];
-    sum += val;
+    sum += data[i];
     i++;
   }
   avg = sum / r;
@@ -59,8 +57,8 @@ void calcSma() {
 
 // Push to the end of the array
 void pushSmaData(int value) {
-    int s = getSamples();
-    int i = 0;
+    short int s = getSamples();
+    short int i = 0;
     while (i < s) {
       // Move from bottom to top.
       smaData[i] = smaData[i+1];

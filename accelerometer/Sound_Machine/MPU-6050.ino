@@ -3,7 +3,7 @@
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
 int accelerationX;  // Last read of acceleration
 int calibrationX;  // Calibration offset
-int accelerationData[100] = {}; // Storage for the collection
+int accelerationData[20] = {}; // Storage for the collection
 
 int getCalibrationX()
 {
@@ -50,7 +50,7 @@ void calibrateACC()
     Wire.endTransmission(true);
     
     // Calibrate to have mainly positive readings
-    int i = 0;
+    short int i = 0;
     while (i < 100) {
       readAccX(); //temp
       calcSma();
@@ -65,8 +65,7 @@ void calibrateACC()
 // Read accelerometer
 void readAccX()
 {
-    int d = getDelay();
-  
+    short int d = getDelay();
     delay(d); // Add a bit of delay between readings
 
     Wire.beginTransmission(MPU_ADDR);
@@ -84,8 +83,8 @@ void readAccX()
 
 // Push to the end of the array
 void pushAccData(int acc) {
-    int s = getSamples();
-    int i = 0;
+    short int s = getSamples();
+    short int i = 0;
     while (i < s) {
       // Move from bottom to top.
       accelerationData[i] = accelerationData[i+1];

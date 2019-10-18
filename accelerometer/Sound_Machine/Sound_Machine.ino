@@ -18,8 +18,8 @@ void setup()
 void loop()
 {
     readAccX();
-    calcSma(); // temp
-    detectChange(); //temp
+    calcSma();
+    detectChange();
     plot();
 }
 

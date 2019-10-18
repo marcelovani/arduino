@@ -1,13 +1,13 @@
 #include "Wire.h" // This library allows you to communicate with I2C devices.
 
-int LED = 13; // Led number
+short int LED = 13; // Led number
 bool ledStatus = 0;
 
 void setupLED()
 {
     // LED
     pinMode(LED, OUTPUT);
-    ledOff();
+    ledOn();
 }
 
 // LED on

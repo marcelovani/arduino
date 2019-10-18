@@ -17,13 +17,10 @@ void setupPlayer()
     while (true)
       ;
   }
-  //Serial.println(F("DFPlayer Mini online."));
-
   DFPlayer.setTimeOut(500); // Set serial communication time out 500ms
   DFPlayer.volume(25);      // Set volume value (0~30).
   DFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   DFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // Set device we use SD as default
-  //DFPlayer.play(1);
 }
 
 void play() {
@@ -33,8 +30,7 @@ void play() {
 }
 
 // Set the volume based on the % of acceleration
-// 0 = 0%
-// 30 = 100%
+// 0 = 0% 30 = 100%
 void setVolume(float perc) {
   DFPlayer.volume(30 * perc / 100);
 }
