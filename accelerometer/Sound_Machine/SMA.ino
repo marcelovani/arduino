@@ -72,20 +72,18 @@ void pushSmaData(int value) {
 }
 
 // Algorithm to detect changes and take actions
-short int firstUp = -9999;
+short int firstUp = -1;
 short int peak = 0;
-float perc = 0;
 short int diff = 0;
 short int playSound = 0;
+float perc = 0;
 
 void detectChange() {
   short int s = getSamples();
 	float threshold = getThreshold();
-
   short int prev = smaData[s-3];
   short int curr = smaData[s-2];
   short int next = smaData[s-1];
-
   String playLabel = "";
 
 	if (curr > prev) {
@@ -97,8 +95,9 @@ void detectChange() {
     }
 
 		// Going up
-		if (firstUp == -9999) {
+		if (firstUp == -1) {
 			firstUp = curr;
+      // @todo only reset playSound after few seconds since last play.
 			playSound = 0;
       ledOff();
 		}
@@ -113,14 +112,14 @@ void detectChange() {
 	else if (curr > threshold && peak > curr) {
 		// Going down.
 		if (playSound == 0 && isPlaying() == false) {
-      //@todo check if DFP is not playing
       playLabel = "PLAY";
       
 			// Play sound
+      setVolume(perc);
       play();
-			playSound = 1;
       ledOn();
-			firstUp = -9999;
+			firstUp = -1;
+      playSound = 1;
 		}
 		peak = next;
 	}

@@ -25,6 +25,7 @@ void ledOff()
 }
 
 // Display LED bar depending on Acceleration
+// @todo display LED bar
 void ledBar(float perc) {
   //Serial.print("\tLED: ");
   if (ledStatus == 1) {
@@ -32,8 +33,8 @@ void ledBar(float perc) {
     Serial.print(getCalibrationX() + getThreshold());
   }
   else {
-    //Serial.print("OFF ");
     Serial.print(0);
+    //Serial.print("OFF ");
   }
   //Serial.println(", ");
 }
