@@ -33,6 +33,12 @@ On Arduino App, select:
 ### Speakers
 
 ## Docs
+http://www.circuitstoday.com/arduino-nano-tutorial-pinout-schematics
+
+https://www.arduino.cc/en/Reference/LiquidCrystal
+
+https://www.instructables.com/id/Arduino-Nano-Directly-Connected-2-X-16-LCD-Display/
+
 https://www.silabs.com/Support%20Documents/Software/Mac_OSX_VCP_Driver.zip
 
 https://sparks.gogo.co.nz/ch340.html

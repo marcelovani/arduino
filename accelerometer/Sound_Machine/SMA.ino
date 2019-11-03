@@ -50,9 +50,12 @@ void calcSma() {
 //  char buff[6];
 //  sprintf(buff, "%3d", avg);
 //  Serial.print(String("AVG: ") + buff);
-
+  // Clear noise
+  int diff = data[i] - data[i-1];
+  if (diff < -5 || diff > 5) {
   // Push to the end of the array
-  pushSmaData(avg);    
+    pushSmaData(avg);
+  }
 }
 
 // Push to the end of the array
