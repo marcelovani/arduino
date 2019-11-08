@@ -1,0 +1,8 @@
+Links
+
+https://randomnerdtutorials.com/guide-for-oled-display-with-arduino/
+https://www.youtube.com/watch?v=13PFOwcK3-I
+https://learn.adafruit.com/adafruit-gfx-graphics-library/overview
+https://www.youtube.com/watch?v=mojHuVxUt_w
+https://www.youtube.com/watch?v=UNcAiyzKMno
+https://create.arduino.cc/projecthub/PMGOHARIAN/how-to-make-a-mini-oscilloscope-at-home-using-arduino-nano-e31ada
