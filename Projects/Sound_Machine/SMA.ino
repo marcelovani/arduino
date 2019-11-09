@@ -81,7 +81,7 @@ float perc = 0;
 
 void detectChange() {
   short int s = getSamples();
-	float threshold = getThreshold();
+	int threshold = getThreshold();
   short int prev = smaData[s-3];
   short int curr = smaData[s-2];
   short int next = smaData[s-1];

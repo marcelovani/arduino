@@ -6,9 +6,6 @@ void setup()
     // LCD
     //LCDsetup();
 
-    // Knobs
-    KnobsSetup();
-
     // LED
     //setupLED();
 

@@ -7,7 +7,7 @@ Pot delayPot(A2, 50); // Recommended 20
 Pot samplesPot(A3, 20); // Recommended 10
 
 bool knobMoving() {
-  //return rangePot.Moving() || thresholdPot.Moving() || delayPot.Moving() || samplesPot.Moving();
+  return rangePot.Moving() || thresholdPot.Moving() || delayPot.Moving() || samplesPot.Moving();
 }
 
 // The range used to calculate SMA
