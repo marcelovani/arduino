@@ -1,13 +1,11 @@
-#include "Arduino.h"
 #include "Pot.h"
-#include <SoftwareSerial.h>
 
-PotLCD PotDisplay();
+PotLCD _potLcd;
 
 /*
  * Constructor
  */
-Pot::Pot(int8_t pin, int max, char *label, short int type=PotLCDTypeDial)
+Pot::Pot(int8_t pin, int max, String label, short int type=PotLCDTypeDial)
 {
   _pin = pin;
   _max = max;
@@ -19,17 +17,6 @@ Pot::Pot(int8_t pin, int max, char *label, short int type=PotLCDTypeDial)
 
   // Establish whatever pin reads you need
   pinMode(_pin, INPUT);
-
-  Serial.begin(9600);
-  delay(100);
-  Serial.print("Pot initialized! pin: ");
-  Serial.print(pin);
-  Serial.print(" max: ");
-  Serial.print(max);
-  Serial.print(" type: ");
-  Serial.print(type);
-  Serial.print(" label: ");
-  Serial.println(label);
 }
 
 /**
@@ -37,6 +24,8 @@ Pot::Pot(int8_t pin, int max, char *label, short int type=PotLCDTypeDial)
  */
 int Pot::read() 
 {
+return 000000000;
+  
   int t = millis();  
   int _value = map(analogRead(_pin), 0, 1023, _max, 0);
 
@@ -67,9 +56,6 @@ int Pot::read()
     Pot::display();
   }
 
-  Serial.print(_value);
-  Serial.print(",");
-
   return _value;
 }
 
@@ -78,24 +64,22 @@ int Pot::read()
  */
 void Pot::display()
 {
-  /*
   switch (_type) {
     case PotLCDTypeDial:
-      PotLCD::DrawDial(PotDisplay, _value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
+      _potLcd.drawDial(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
       break;
 
     case PotLCDTypeChartV:
-      PotLCD::DrawBarChartV(PotDisplay, _value, 90, 50, 25,   0, 5, 1, 0, 200, _label, _redraw);
+      _potLcd.drawBarChartV(_value, 90, 50, 25,   0, 5, 1, 0, 200, _label, _redraw);
       break;
 
     case PotLCDTypeChartH:
-      PotLCD::DrawBarChartH(PotDisplay, _value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw);
+      _potLcd.drawBarChartH(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw);
       break;
 
     default:
       break;
   }
-  */
 }
 
 /**

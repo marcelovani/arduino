@@ -30,8 +30,8 @@
   A5        SCL on the display. use dedicated pin on board if provided
 */
 
-#ifndef PotLCD_H
-#define PotLCD_H
+#ifndef PotLCD_h
+#define PotLCD_h
 
 #include "Arduino.h"
 #include <Wire.h>
@@ -54,7 +54,7 @@ class PotLCD : public Adafruit_SSD1306
       rst_pin = reset pin, usually -1 if shared or the address i.e A4
       type = the dial type: Dial, ChartV, ChartH, Cgraph
     */
-    PotLCD(uint8_t w=128, uint8_t h=64, uint8_t addr=0x3C, int8_t rst_pin=-1, short int type=PotLCDTypeDial);
+    PotLCD(uint8_t w=128, uint8_t h=64, uint8_t addr=0x3C, int8_t rst_pin=-1);
 
     /*
       This method will draw a dial-type graph for single input
@@ -73,7 +73,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawDial(Adafruit_SSD1306 &d, double curval, int cx, int cy, int r, double loval , double hival , double inc, double dig, double sa, String label, bool &Redraw);
+    void drawDial(double curval, int cx, int cy, int r, double loval , double hival , double inc, double dig, double sa, String label, bool &Redraw);
 
     /*
       This method will draw a vertical bar graph for single input
@@ -92,7 +92,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawBarChartV(Adafruit_SSD1306 &d, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
+    void drawBarChartV(double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
     
     /*
       This method will draw a horizontal bar graph for single input
@@ -111,7 +111,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawBarChartH(Adafruit_SSD1306 &d, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
+    void drawBarChartH(double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
 
     /*
       function to draw a cartesian coordinate system and plot whatever data you want
@@ -133,7 +133,7 @@ class PotLCD : public Adafruit_SSD1306
       title = title of graph
       &redraw = flag to redraw graph on fist call only
     */
-    void PotLCD::DrawCGraph(Adafruit_SSD1306 &d, double x, double y, double gx, double gy, double w, double h, double xlo, double xhi, double xinc, double ylo, double yhi, double yinc, double dig, String title, boolean &Redraw);
+    void drawCGraph(double x, double y, double gx, double gy, double w, double h, double xlo, double xhi, double xinc, double ylo, double yhi, double yinc, double dig, String title, boolean &Redraw);
 
   private:
     int8_t _rst_pin; // Normally -1 for shared or A4, etc
@@ -141,8 +141,9 @@ class PotLCD : public Adafruit_SSD1306
     uint8_t _h;
     uint8_t _addr;
     short int _type;
-    double _ox , _oy;
+    double _ox, _oy;
     double _x, _y;
+    Adafruit_SSD1306 _display;
 };
 
 #endif

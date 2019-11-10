@@ -4,13 +4,13 @@
 #include "Arduino.h"
 #include "LCD.h"
 
-#ifndef Pot_H
-#define Pot_H
+#ifndef Pot_h
+#define Pot_h
 
 class Pot : public PotLCD
 {
   public:
-    Pot(int8_t pin, int max, char *label, short int type);
+    Pot(int8_t pin, int max, String label, short int type);
 
     // Read the analog pin
     int read();
@@ -32,7 +32,7 @@ class Pot : public PotLCD
     // Lcd
     short int _type;
     boolean _redraw;
-    char _label;
+    String _label;
 };
 
 #endif

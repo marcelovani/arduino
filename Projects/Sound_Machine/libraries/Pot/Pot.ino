@@ -1,11 +1,11 @@
 // Potentiometer example
-
+#include "Arduino.h"
 #include <Wire.h>
 #include <SoftwareSerial.h>
 #include "Pot.h"
 
 Pot volPot(A0, 1000, "Volume", PotLCDTypeChartH); // Create an instance of Pot on pin 14 and max of 1000
-// Pot bassPot(A1, 100, "Bass", PotLCDTypeDial); // Create an instance of Pot on pin 15 and max of 100
+Pot bassPot(A1, 100, "Bass", PotLCDTypeDial); // Create an instance of Pot on pin 15 and max of 100
 
 void setup()
 {
@@ -16,6 +16,7 @@ void setup()
     //Pot volPot(A0, 1000, "Volume", PotLCDTypeChartH); // Create an instance of Pot on pin 14 and max of 1000
 
     //Pot bassPot(A1, 100, "Bass", PotLCDTypeDial); // Create an instance of Pot on pin 15 and max of 100
+    Pot test(A1, 100, "Bass", PotLCDTypeDial); // Create an instance of Pot on pin 15 and max of 100
 
 }
 
@@ -25,6 +26,7 @@ void loop()
     short int bass = getBass();
 
     Serial.println(vol);
+    Serial.println(bass);
     delay(10);
 }
 
@@ -33,7 +35,7 @@ void loop()
  */
 bool knobsMoving()
 {
-  //return volPot.knobMoving() || bassPot.knobMoving();
+  return volPot.knobMoving() || bassPot.knobMoving();
 }
 
 /*
@@ -50,5 +52,5 @@ short int getVolume()
  */
 short int getBass()
 {
-  //return bassPot.read();
+  return bassPot.read();
 }
