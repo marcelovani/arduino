@@ -1,22 +1,31 @@
 #include "Pot.h"
 
-PotLCD _potLcd;
+//PotGraph potGraph;
 
 /*
  * Constructor
  */
-Pot::Pot(int8_t pin, int max, String label, short int type=PotLCDTypeDial)
+Pot::Pot(void) {
+  
+}
+ 
+Pot::Pot(short int type, int8_t pin, int max, String label)
 {
+//  _graph = potGraph;
   _pin = pin;
   _max = max;
-
-  // Lcd
   _label = label;
-  _type = type;
-  _redraw = true;
 
   // Establish whatever pin reads you need
   pinMode(_pin, INPUT);
+}
+
+/*
+ * Begin
+ */
+void Pot::begin(PotGraph graph) {
+//void Pot::begin() {
+  //_graph = graph;
 }
 
 /**
@@ -24,7 +33,6 @@ Pot::Pot(int8_t pin, int max, String label, short int type=PotLCDTypeDial)
  */
 int Pot::read() 
 {
-return 000000000;
   
   int t = millis();  
   int _value = map(analogRead(_pin), 0, 1023, _max, 0);
@@ -52,29 +60,26 @@ return 000000000;
   }
 
   // Display graphs
-  if (knobMoving()) {
-    Pot::display();
-  }
+  //if (knobMoving()) {
+    display();
+  //}
 
   return _value;
 }
 
-/*
- * Display the graph
- */
-void Pot::display()
-{
-  switch (_type) {
-    case PotLCDTypeDial:
-      _potLcd.drawDial(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
+void Pot::display() {
+    switch (_graph.getType()) {
+    case PotGraphTypeDial:
+      boolean _redraw = true;
+      //potGraph.drawDial(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
       break;
 
-    case PotLCDTypeChartV:
-      _potLcd.drawBarChartV(_value, 90, 50, 25,   0, 5, 1, 0, 200, _label, _redraw);
+    case PotGraphTypeChartV:
+      //potGraph.drawBarChartV(_value, 90, 50, 25,   0, 5, 1, 0, 200, _label, _redraw);
       break;
 
-    case PotLCDTypeChartH:
-      _potLcd.drawBarChartH(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw);
+    case PotGraphTypeChartH:
+      //potGraph.drawBarChartH(_value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw);
       break;
 
     default:
