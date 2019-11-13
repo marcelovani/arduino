@@ -47,6 +47,9 @@ class PotGraph
   public:
     PotGraph(void);
     bool PotGraph::begin();
+
+    void PotGraph::clearDisplay();
+
     /*
       Constructor
     */
@@ -132,21 +135,22 @@ class PotGraph
     */
     void drawCGraph(Adafruit_SSD1306 &display, double x, double y, double gx, double gy, double w, double h, double xlo, double xhi, double xinc, double ylo, double yhi, double yinc, double dig, String title, boolean &Redraw);
 
-    void display(int value);
+//    void display(int value);
     
     short int getType();
     
     Adafruit_SSD1306 _display;
+    bool _redraw;
+    double _x, _y;
 
   private:
+    bool _initialized=false;
     int8_t _rst_pin; // Normally -1 for shared or A4, etc
     uint8_t _w;
     uint8_t _h;
     uint8_t _addr;
     short int _type;
     double _ox, _oy;
-    double _x, _y;
-    bool _redraw;
 };
 
 #endif

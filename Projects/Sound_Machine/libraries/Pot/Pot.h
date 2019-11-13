@@ -16,7 +16,7 @@ class Pot
     Pot(short int type, int8_t pin, int max, String label);
 
     // Begin
-    void begin(PotGraph graph);
+    void begin();
 
     // Read the analog pin
     int read();
@@ -27,17 +27,21 @@ class Pot
     // Set display
     void setDisplay(Adafruit_SSD1306 display);
 
-    // Display stuff
-    void display();
+    // Draw stuff
+    void draw();
 
   private:
     PotGraph _graph;
     int8_t _pin;
     int _max;
-    int _prevValue;
+    short int _type;
+    int _prevValue=-9999;
+    //int _rawValue;
     int _value;
     int _moveStart;
     int _timer;
+    bool _redraw=true;
+    bool _drawing=false;
     String _label;
 };
 

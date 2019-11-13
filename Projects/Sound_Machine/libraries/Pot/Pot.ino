@@ -2,15 +2,12 @@
 #include "Arduino.h"
 #include <Wire.h>
 #include <SoftwareSerial.h>
-//#include "Pot.h"
-#include "PotGraph.h"
+#include "Pot.h"
+//#include "PotGraph.h"
 
-PotGraph potGraph;
-
-//Pot volPot;
-//    Pot volPot(PotGraphTypeDial, A0, 1000, "Volume"); // Create an instance of Pot on pin 14 and max of 1000
-
-//Pot bassPot;
+Pot volPot(PotGraphTypeChartH, A0, 1000, "Volume"); // Create an instance of Pot on pin 14 and max of 1000
+Pot bassPot(PotGraphTypeDial, A1, 100, "Bass"); // Create an instance of Pot on pin 15 and max of 100
+Pot rangePot(PotGraphTypeDial, A2, 5, "Range"); // Create an instance of Pot on pin 16 and max of 10
 
 //Adafruit_SSD1306 display;
 
@@ -32,7 +29,7 @@ void setup()
 //  display.clearDisplay();
 //  display.display();
 
-    potGraph.begin();
+    //potGraph.begin();
     // Instantiate graphs
     //PotGraph dialGraph(display, LCD_ADDR, PotGraphTypeDial);
     //PotGraph dialGraph(PotGraphTypeDial);
@@ -40,8 +37,10 @@ void setup()
     //PotGraph barGraph(PotGraphTypeChartH);
 //
     // Create pots
-//    Pot volPot(PotGraphTypeDial, A0, 1000, "Volume"); // Create an instance of Pot on pin 14 and max of 1000
-    //Pot bassPot(PotGraphTypeChartH, A1, 100, "Bass"); // Create an instance of Pot on pin 15 and max of 100
+    //Pot volPot(PotGraphTypeDial, A0, 1000, "Volume"); // Create an instance of Pot on pin 14 and max of 1000
+    volPot.begin();
+    bassPot.begin();
+    rangePot.begin();
 
 //    // Assign Graphs to pots
     //volPot.begin(barGraph);
@@ -54,14 +53,18 @@ void loop()
 {
     short int vol = getVolume();
     short int bass = getBass();
+    short int range = getRange();
 
-    Serial.println(vol);
-    Serial.println(bass);
-
-String _label = "test";
-Adafruit_SSD1306 display = potGraph._display;
-potGraph.drawDial(display, 500, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
-    delay(10);
+  if (!knobsMoving()) {
+    // @todo use accel value
+    //potGraph.drawCGraph(potGraph._display, potGraph._x++, 700, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Accelaration", _redraw);    
+  }
+//    Serial.print(vol);
+//    Serial.print(",");
+//    Serial.print(bass);
+//  }
+  Serial.println();
+//    delay(1);
 }
 
 /*
@@ -69,7 +72,7 @@ potGraph.drawDial(display, 500, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); 
  */
 bool knobsMoving()
 {
-//  return volPot.knobMoving() || bassPot.knobMoving();
+//  return volPot.knobMoving() || bassPot.knobMoving() || rangePot.knobMoving();
 }
 
 /*
@@ -77,7 +80,7 @@ bool knobsMoving()
  */
 short int getVolume()
 {
-//  return volPot.read();
+  return volPot.read();
 }
 
 /*
@@ -85,5 +88,13 @@ short int getVolume()
  */
 short int getBass()
 {
-//  return bassPot.read();
+  return bassPot.read();
+}
+
+/*
+ * Return the range
+ */
+short int getRange()
+{
+  return rangePot.read();
 }

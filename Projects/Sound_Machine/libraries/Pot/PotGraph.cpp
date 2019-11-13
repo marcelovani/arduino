@@ -1,12 +1,15 @@
 #include "PotGraph.h"
 
-Adafruit_SSD1306 display;
+  // Create an instance of LCD display
+  //Adafruit_SSD1306 _display(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
+
+  Adafruit_SSD1306 _display;
 
 /*
  * Constructor
  */
 PotGraph::PotGraph(void) {
-  _type = false;
+  //_type = false;
 }
 
   
@@ -14,44 +17,59 @@ PotGraph::PotGraph(void) {
 //PotGraph::PotGraph(short int type)
 bool PotGraph::begin()
 {
-  
+  _redraw = true;
+
+  if (_initialized == true) {
+    return;
+  }
+
   Serial.begin(9600);
     //delay(1000);
     Serial.println("Init graph");
 
   // Create an instance of LCD display
-  Adafruit_SSD1306 display(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
+  //Adafruit_SSD1306 _display(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
 
-  _display = display;
+//  _display = display;
 //  _addr = addr;
 //  _type = type;
-  _redraw = true;
 
   // initialize the display
   // note you may have to change the address
   // the most common are 0X3C and 0X3D
-  display.begin(SSD1306_SWITCHCAPVCC, LCD_ADDR);
+  _display.begin(SSD1306_SWITCHCAPVCC, LCD_ADDR);
 
   // if you distribute your code, the adafruit license requires you show their splash screen
   // otherwise clear the video buffer memory then display
-  display.display();
-  delay(3000);
-  display.clearDisplay();
-  display.display();
+  _display.display();
+  delay(300);
+  clearDisplay();
 
 //  _redraw = true;
 //  String _label = "test";
 //  drawDial(display, 500, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
+    //drawCGraph(_display, _x++, 700, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Accelaration", _redraw);    
+    //drawDial(_display, 100, 90, 50, 25, 0, 5 , 1, 0, 200, 'test', _redraw); // @todo calculate values for scale
+
 
 Serial.println("Ready!");
+  _initialized = true;
+}
+
+/**
+ * Clear display;
+ */
+void PotGraph::clearDisplay() {
+  _display.clearDisplay();
+  _display.display();
 }
 
 /*
  * Display the graph
  */
-void PotGraph::display(int value) {
-
-}
+//void PotGraph::display(int value) {
+//
+//}
 
 short int PotGraph::getType() {
   return _type;
