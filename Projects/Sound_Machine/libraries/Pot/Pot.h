@@ -16,7 +16,7 @@ class Pot
     Pot(short int type, int8_t pin, int max, String label);
 
     // Begin
-    void begin();
+    void begin(Adafruit_SSD1306 &display);
 
     // Read the analog pin
     int read();
@@ -31,6 +31,7 @@ class Pot
     void draw();
 
   private:
+    Adafruit_SSD1306 _display;
     PotGraph _graph;
     int8_t _pin;
     int _max;

@@ -46,7 +46,7 @@ class PotGraph
 {
   public:
     PotGraph(void);
-    bool PotGraph::begin();
+    bool PotGraph::begin(Adafruit_SSD1306 &display);
 
     void PotGraph::clearDisplay();
 
@@ -139,7 +139,7 @@ class PotGraph
     
     short int getType();
     
-    Adafruit_SSD1306 _display;
+    //Adafruit_SSD1306 _display;
     bool _redraw;
     double _x, _y;
 

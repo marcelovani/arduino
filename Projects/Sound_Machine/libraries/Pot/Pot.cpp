@@ -1,5 +1,6 @@
 #include "Pot.h"
 
+//Adafruit_SSD1306 _display;
 PotGraph potGraph;
 
 /*
@@ -24,13 +25,30 @@ Pot::Pot(short int type, int8_t pin, int max, String label)
 /*
  * Begin
  */
-void Pot::begin() {
-    
+void Pot::begin(Adafruit_SSD1306 &display) {
+  _display = &display;
+
   Serial.begin(9600);
     //delay(1000);
     Serial.println("Init pot");
-    
-  potGraph.begin();
+
+    //Adafruit_SSD1306 _display = &display;
+    potGraph.begin(display);
+//_display.begin(SSD1306_SWITCHCAPVCC, LCD_ADDR);
+//_display.display();
+//delay(2000);
+//_display.clearDisplay();
+//_display.display();
+//_display.setTextSize(1);
+//_display.setTextColor(SSD1306_WHITE);
+//_display.setCursor(0,0);
+//_display.print("Connecting to SSID\n'adafruit':");
+//_display.display();
+
+  
+  bool _redraw=true;
+  //potGraph.drawDial(_display, 600, 90, 50, 25, 0, 5 , 1, 0, 200, "aaa", _redraw); // @todo calculate values for scale
+
 //void Pot::begin() {
   //_graph = graph;
 }
@@ -55,7 +73,7 @@ Serial.print("\t");
   int diff = _prevValue - _rawValue;
 Serial.print(diff);
 Serial.print("\t");
-  if (diff < -5 || diff > 3) { //@todo detect diff based on raw value 0 - 1024
+  if (diff < -6 || diff > 6) { //@todo make noise configurable
     //_value = _rawValue;
     Serial.print(diff);
     Serial.print("\t");
@@ -79,10 +97,11 @@ Serial.print("\t");
     _rawValue = _prevValue = analogRead(_pin);
     _moveStart = 0;
     _drawing = false;
-    potGraph.clearDisplay();
+    //potGraph.clearDisplay(_display);
+    _redraw = true;
   }
 
-  _value = map(_rawValue, 0, 1023, 0, _max);
+  _value = map(_rawValue, 0, 1023, _max, 1);
 
 Serial.print(_value);
 Serial.print("\t");
@@ -93,24 +112,26 @@ Serial.print("\t");
     _drawing = true;
     draw();
   }
-  else {
-  }
 
   return _value;
 }
 
 void Pot::draw() {
+  //@TODO draw is not working
+  //potGraph.drawBarChartH(_display, 600, 10, 45, 100, 20, 0, 5, 1, 0, "A0 (volts)", _redraw);
+  return;
+  
     switch (_type) {
     case PotGraphTypeDial:
-      potGraph.drawDial(potGraph._display, _value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
+      potGraph.drawDial(_display, _value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
       break;
 
     case PotGraphTypeChartV:
-      potGraph.drawBarChartV(potGraph._display, _value, 90, 50, 25,   0, 5, 1, 0, 200, _label, _redraw);
+      potGraph.drawBarChartV(_display, _value, 10, 45, 100, 20, 0, 5, 1, 0, _label, _redraw);
       break;
 
     case PotGraphTypeChartH:
-      potGraph.drawBarChartH(potGraph._display, _value, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw);
+      potGraph.drawBarChartH(_display, _value, 10, 45, 100, 20, 0, 5, 1, 0, _label, _redraw);
       break;
 
     default:

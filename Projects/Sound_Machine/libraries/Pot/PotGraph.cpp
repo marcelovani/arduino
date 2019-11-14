@@ -3,7 +3,7 @@
   // Create an instance of LCD display
   //Adafruit_SSD1306 _display(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
 
-  Adafruit_SSD1306 _display;
+//Adafruit_SSD1306 _display;
 
 /*
  * Constructor
@@ -15,8 +15,9 @@ PotGraph::PotGraph(void) {
   
 //PotGraph::PotGraph(Adafruit_SSD1306 display, uint8_t addr, short int type)
 //PotGraph::PotGraph(short int type)
-bool PotGraph::begin()
+bool PotGraph::begin(Adafruit_SSD1306 &display)
 {
+  Adafruit_SSD1306 _display = &display;
   _redraw = true;
 
   if (_initialized == true) {
@@ -26,34 +27,40 @@ bool PotGraph::begin()
   Serial.begin(9600);
     //delay(1000);
     Serial.println("Init graph");
-
-  // Create an instance of LCD display
-  //Adafruit_SSD1306 _display(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
-
-//  _display = display;
-//  _addr = addr;
-//  _type = type;
-
-  // initialize the display
-  // note you may have to change the address
-  // the most common are 0X3C and 0X3D
-  _display.begin(SSD1306_SWITCHCAPVCC, LCD_ADDR);
-
-  // if you distribute your code, the adafruit license requires you show their splash screen
-  // otherwise clear the video buffer memory then display
-  _display.display();
-  delay(300);
-  clearDisplay();
-
-//  _redraw = true;
-//  String _label = "test";
-//  drawDial(display, 500, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
-    //drawCGraph(_display, _x++, 700, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Accelaration", _redraw);    
-    //drawDial(_display, 100, 90, 50, 25, 0, 5 , 1, 0, 200, 'test', _redraw); // @todo calculate values for scale
-
+    
+_display.begin(SSD1306_SWITCHCAPVCC, LCD_ADDR);
+_display.display();
+delay(2000);
+clearDisplay();
+_display.setTextSize(1);
+_display.setTextColor(SSD1306_WHITE);
+_display.setCursor(0,0);
+_display.print("Connecting to SSID\n'adafruit':");
+_display.display();
 
 Serial.println("Ready!");
+    //delay(2000);
+//  String _label = "test";
+//  drawDial(display, 500, 90, 50, 25, 0, 5 , 1, 0, 200, _label, _redraw); // @todo calculate values for scale
+    //drawCGraph(_display, 600, 700, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Accelaration", _redraw);    
+    clearDisplay();
+    drawDial(_display, 100, 90, 50, 25, 0, 5 , 1, 0, 200, 'test', _redraw); // @todo calculate values for scale
+    //drawDial(_display, 600, 90, 50, 25, 0, 5 , 1, 0, 200, "aaa", _redraw); // @todo calculate values for scale
+    //drawBarChartH(_display, 600, 10, 45, 100, 20, 0, 5, 1, 0, "A0 (volts)", _redraw);
+
+
   _initialized = true;
+
+    // text display tests
+//  display.setTextSize(1);
+//  display.setTextColor(SSD1306_WHITE);
+//  display.setCursor(0,0);
+//  display.print("Connecting to SSID\n'adafruit':");
+//  display.print("connected!");
+//  display.println("IP: 10.0.1.23");
+//  display.println("Sending val #0");
+//  display.setCursor(0,0);
+//  display.display(); // actually display all of the above
 }
 
 /**
