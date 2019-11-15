@@ -5,11 +5,11 @@
 
 class Pot {
   public:
-    int8_t type;
-    int8_t pin;
-    short int max;
-    String label;
-    short int value;
+    int8_t _type;
+    int8_t _pin;
+    short int _max;
+    String _label;
+    short int _value;
 
     Pot(void);
 

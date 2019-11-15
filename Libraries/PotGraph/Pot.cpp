@@ -7,10 +7,10 @@ Pot::Pot(void) {
 }
 
 Pot::Pot(short int type, int8_t pin, int max, String label) {
-  //_type = type;
-  //_pin = pin;
-  //_max = max;
-  //_label = label;
+  _type = type;
+  _pin = pin;
+  _max = max;
+  _label = label;
 
   //  // Establish whatever pin reads you need
   pinMode(pin, INPUT);
@@ -21,7 +21,7 @@ Pot::Pot(short int type, int8_t pin, int max, String label) {
 */
 int Pot::read() {
   int t = millis();
-  int _rawValue = analogRead(pin);
+  int _rawValue = analogRead(_pin);
 
   // Prevent falsely detecting movement on the first iteration
   if (_prevValue == -9999) {
@@ -56,19 +56,19 @@ int Pot::read() {
 
   // Detect change finished
   if (_moveStart != 0 && _timer < t) {
-    _rawValue = _prevValue = analogRead(pin);
+    _rawValue = _prevValue = analogRead(_pin);
     _moveStart = 0;
     //_drawing = false;
     //_redraw = true;
     // clear()
   }
 
-  value = map(_rawValue, 0, 1023, max, 1);
+  _value = map(_rawValue, 0, 1023, _max, 1);
 
-  Serial.print(value);
+  Serial.print(_value);
   Serial.print("\t");
 
-  return value;
+  return _value;
 }
 
 /**

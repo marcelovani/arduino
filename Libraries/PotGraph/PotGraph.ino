@@ -30,6 +30,7 @@ void setup() {
   screen.display();
   splash(screen);
   delay(2000);
+  screen.clearDisplay();
   screen.display();
   Serial.println("Screen attached");
 
