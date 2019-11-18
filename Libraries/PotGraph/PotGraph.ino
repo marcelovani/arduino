@@ -11,7 +11,12 @@ Adafruit_SSD1306 screen(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
 
 PotGraph potGraph;
 
-Pot samplesPot  (PotGraphTypeDial,   A0, 20,   "Samples     ideal:10"); // Create an instance of Pot on pin 14 and max of 20 ideal 10
+//Pot pots[] = {
+//  Pot (PotGraphTypeDial,   A0, 20,   "Samples     ideal:10")
+//}
+Pot *pots[4];
+
+//Pot samplesPot  (PotGraphTypeDial,   A0, 20,   "Samples     ideal:10"); // Create an instance of Pot on pin 14 and max of 20 ideal 10
 //Pot rangePot    (PotGraphTypeDial,   A1, 10,   "Range        ideal:4"); // Create an instance of Pot on pin 15 and max of 10 ideal 4
 //@todo this library is too heavy to be instantiated 4 times
 // need to split pot and PotGraph, instantiate potGraph only once
@@ -19,6 +24,11 @@ Pot samplesPot  (PotGraphTypeDial,   A0, 20,   "Samples     ideal:10"); // Creat
 //Pot thresholdPot(PotGraphTypeChartH, A3, 1000, "Threshold  ideal:600"); // Create an instance of Pot on pin 17 and max of 1K ideal 600
 
 void setup() {
+  pots[0] = new Pot(PotGraphTypeDial,   A0, 20,   "Samples     ideal:10");
+  pots[1] = new Pot(PotGraphTypeDial,   A1, 10,   "Range        ideal:4");
+  pots[2] = new Pot(PotGraphTypeDial,   A2, 10,   "Delay       ideal:20");
+  pots[3] = new Pot(PotGraphTypeChartH, A3, 1000, "Threshold  ideal:600");
+
   Serial.begin(9600);
   delay(1000);
   Serial.println("PotGraph example");
@@ -44,14 +54,22 @@ void loop() {
   Serial.print(freeMemory());
   Serial.print("\t");
 
-  samplesPot.read();
+  for (int i=0; i<sizeof pots/sizeof pots[0]; i++) {
+     short int value = pots[i]->read();
+     if (pots[i]->knobMoving()) {
+//      potGraph.draw(screen, pots[i]);
+      break;
+     }
+  }
+//    pots[0]->read();
+//  samplesPot.read();
 //  rangePot.read();
 //  delayPot.read();
 //  thresholdPot.read();
 
   if (knobsMoving()) {
-    potGraph.draw(screen, samplesPot);
-//    rangePot.draw(screen);
+//    potGraph.draw(screen, samplesPot);
+////    rangePot.draw(screen);
 //    delayPot.draw(screen);
 //    thresholdPot.draw(screen);
   } else {
@@ -65,7 +83,7 @@ void loop() {
  */
 bool knobsMoving()
 {
-  return samplesPot.knobMoving();// || rangePot.knobMoving();// || thresholdPot.knobMoving() || delayPot.knobMoving();
+//  return samplesPot.knobMoving();// || rangePot.knobMoving();// || thresholdPot.knobMoving() || delayPot.knobMoving();
 }
 
 /*
