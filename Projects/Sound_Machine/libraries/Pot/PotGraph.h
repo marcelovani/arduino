@@ -30,31 +30,31 @@
   A5        SCL on the display. use dedicated pin on board if provided
 */
 
-#ifndef PotLCD_H
-#define PotLCD_H
-
-#include "Arduino.h"
-#include <Wire.h>
+#include <SoftwareSerial.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "config.h"
 
-#define PotLCDTypeDial 0x1
-#define PotLCDTypeChartV 0x2
-#define PotLCDTypeChartH 0x3
+#ifndef PotGraph_h
+#define PotGraph_h
 
-class PotLCD : public Adafruit_SSD1306
+#define PotGraphTypeDial 0x1
+#define PotGraphTypeChartV 0x2
+#define PotGraphTypeChartH 0x3
+
+class PotGraph
 {
   public:
-      /*
+    PotGraph(void);
+    bool PotGraph::begin(Adafruit_SSD1306 &display);
+
+    void PotGraph::clearDisplay();
+
+    /*
       Constructor
-    
-      w = display width
-      h = display height
-      addr = display address, usually 0x3C or 0x3D
-      rst_pin = reset pin, usually -1 if shared or the address i.e A4
-      type = the dial type: Dial, ChartV, ChartH, Cgraph
     */
-    PotLCD(uint8_t w=128, uint8_t h=64, uint8_t addr=0x3C, int8_t rst_pin=-1, short int type=PotLCDTypeDial);
+    //PotGraph(Adafruit_SSD1306 display, uint8_t addr=0x3C,short int type=PotGraphTypeDial);
+    //PotGraph(Adafruit_SSD1306 display, uint8_t addr=0x3C,short int type=PotGraphTypeDial);
 
     /*
       This method will draw a dial-type graph for single input
@@ -73,7 +73,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawDial(Adafruit_SSD1306 &d, double curval, int cx, int cy, int r, double loval , double hival , double inc, double dig, double sa, String label, bool &Redraw);
+    void drawDial(Adafruit_SSD1306 &display, double curval, int cx, int cy, int r, double loval , double hival , double inc, double dig, double sa, String label, bool &Redraw);
 
     /*
       This method will draw a vertical bar graph for single input
@@ -92,7 +92,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawBarChartV(Adafruit_SSD1306 &d, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
+    void drawBarChartV(Adafruit_SSD1306 &display, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
     
     /*
       This method will draw a horizontal bar graph for single input
@@ -111,7 +111,7 @@ class PotLCD : public Adafruit_SSD1306
       label = bottom lable text for the graph
       redraw = flag to redraw display. only on first pass (to reduce flickering)
     */
-    void PotLCD::DrawBarChartH(Adafruit_SSD1306 &d, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
+    void drawBarChartH(Adafruit_SSD1306 &display, double curval, double x , double y , double w, double h , double loval , double hival , double inc , double dig, String label, bool &Redraw);
 
     /*
       function to draw a cartesian coordinate system and plot whatever data you want
@@ -133,16 +133,24 @@ class PotLCD : public Adafruit_SSD1306
       title = title of graph
       &redraw = flag to redraw graph on fist call only
     */
-    void PotLCD::DrawCGraph(Adafruit_SSD1306 &d, double x, double y, double gx, double gy, double w, double h, double xlo, double xhi, double xinc, double ylo, double yhi, double yinc, double dig, String title, boolean &Redraw);
+    void drawCGraph(Adafruit_SSD1306 &display, double x, double y, double gx, double gy, double w, double h, double xlo, double xhi, double xinc, double ylo, double yhi, double yinc, double dig, String title, boolean &Redraw);
+
+//    void display(int value);
+    
+    short int getType();
+    
+    //Adafruit_SSD1306 _display;
+    bool _redraw;
+    double _x, _y;
 
   private:
+    bool _initialized=false;
     int8_t _rst_pin; // Normally -1 for shared or A4, etc
     uint8_t _w;
     uint8_t _h;
     uint8_t _addr;
     short int _type;
-    double _ox , _oy;
-    double _x, _y;
+    double _ox, _oy;
 };
 
 #endif

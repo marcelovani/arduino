@@ -118,12 +118,12 @@ void loop(void) {
   //  DrawDial(display, volts, 65, 50, 25, 0, 5 , 1, 0, 200, "A0 (volts)", Redraw3);
 
   // for multiple graphs uncomment the next 2 lines
-    DrawBarChartV(display, bvolts, 5,  60, 10, 40, 0, 1024 , 256, 0, "A0 (bits/volts)", Redraw1);
-    DrawDial(display, volts, 90, 50, 25, 0, 5 , 1, 0, 200, "A0 (bits/volts)", Redraw3);
+    //DrawBarChartV(display, bvolts, 5,  60, 10, 40, 0, 1024 , 256, 0, "A0 (bits/volts)", Redraw1);
+    //DrawDial(display, volts, 90, 50, 25, 0, 5 , 1, 0, 200, "A0 (bits/volts)", Redraw3);
 
 
   // or show a cartesian style graph to plot values over time (or whatever)
-//  DrawCGraph(display, x++, bvolts, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Bits vs Seconds", Redraw4);    
+  DrawCGraph(display, x++, bvolts, 30, 50, 75, 30, 0, 100, 25, 0, 1024, 512, 0, "Bits vs Seconds", Redraw4);    
 //  if (x > 100) {
 //     x = 0;
 //  }

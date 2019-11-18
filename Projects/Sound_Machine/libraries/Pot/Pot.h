@@ -2,15 +2,21 @@
  * Reads potentiometers
  */
 #include "Arduino.h"
-#include "LCD.h"
+#include <SoftwareSerial.h>
+#include "PotGraph.h"
 
-#ifndef Pot_H
-#define Pot_H
+#ifndef Pot_h
+#define Pot_h
 
-class Pot : public PotLCD
+class Pot
 {
   public:
-    Pot(int8_t pin, int max, char *label, short int type);
+    Pot(void);
+  
+    Pot(short int type, int8_t pin, int max, String label);
+
+    // Begin
+    void begin(Adafruit_SSD1306 &display);
 
     // Read the analog pin
     int read();
@@ -18,21 +24,26 @@ class Pot : public PotLCD
     // Check if potentiometer is being moved
     bool knobMoving();
 
-    // Lcd display
-    void display();
+    // Set display
+    void setDisplay(Adafruit_SSD1306 display);
+
+    // Draw stuff
+    void draw();
 
   private:
+    Adafruit_SSD1306 _display;
+    PotGraph _graph;
     int8_t _pin;
     int _max;
-    int _prevValue;
+    short int _type;
+    int _prevValue=-9999;
+    //int _rawValue;
     int _value;
     int _moveStart;
     int _timer;
-
-    // Lcd
-    short int _type;
-    boolean _redraw;
-    char _label;
+    bool _redraw=true;
+    bool _drawing=false;
+    String _label;
 };
 
 #endif
