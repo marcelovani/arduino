@@ -16,27 +16,37 @@ void PotGraph::draw(Adafruit_SSD1306 &screen, Pot &pot) {
   //  if (_drawing) {
   //    return;
   //  }
+  Serial.print(pot._label);
+  Serial.print("\t");
+  Serial.print(pot._type);
+  Serial.print("\t");
+  Serial.print(pot._value);
+  Serial.print("\t");
+  Serial.print(pot._max);
+  Serial.print("\t");
+  Serial.print(_redraw);
+  Serial.print("\t");
 
-  switch (pot.type) {
+  switch (pot._type) {
     case PotGraphTypeDial:
       {
         int inc = 1; // Calculate increment
-        if (pot.max > 10) {
-          inc = pot.max / 10;
+        if (pot._max > 10) {
+          inc = pot._max / 10;
         }
-        drawDial(screen, pot.value, 65, 53, 25, 0, pot.max, inc, 0, 180, pot.label, _redraw);
+        drawDial(screen, pot._value, 65, 53, 25, 0, pot._max, inc, 0, 180, pot._label, _redraw);
       }
       break;
 
     case PotGraphTypeChartV:
       {
-        drawBarChartV(screen, pot.value, 10, 45, 100, 20, 0, 5, 1, 0, pot.label, _redraw);
+        drawBarChartV(screen, pot._value, 10, 45, 100, 20, 0, 5, 1, 0, pot._label, _redraw);
       }
       break;
 
     case PotGraphTypeChartH:
       {
-        drawBarChartH(screen, pot.value, 10, 45, 100, 20, 0, 5, 1, 0, pot.label, _redraw);
+        drawBarChartH(screen, pot._value, 10, 45, 100, 20, 0, 5, 1, 0, pot._label, _redraw);
       }
       break;
 
