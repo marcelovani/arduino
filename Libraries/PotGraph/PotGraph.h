@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <Adafruit_SSD1306.h>
+#include "Pot.h"
 #include "config.h"
 
 #ifndef PotGraph_h
@@ -15,20 +16,7 @@ class PotGraph {
 
     PotGraph(void);
 
-    PotGraph(short int type, int8_t pin, int max, String label);
-
-    void attach(Adafruit_SSD1306 &screen);
-
-    void clear(Adafruit_SSD1306 &screen);
-
-    void splash(Adafruit_SSD1306 &screen);
-
-    int read();
-
-    // Check if potentiometer is being moved
-    bool knobMoving();
-
-    void draw(Adafruit_SSD1306 &screen);
+    void draw(Adafruit_SSD1306 &screen, Pot &pot);
 
     /*
       This method will draw a dial-type graph for single input
@@ -113,19 +101,9 @@ class PotGraph {
     uint8_t _w;
     uint8_t _h;
     double _ox, _oy;
-
+    
     bool _redraw = true;
     bool _drawing = false;
-    
-    int8_t _type;
-    int8_t _pin;
-    int _max;
-    String _label;
-    
-    short int _value;
-    int _prevValue=-9999;
-    int _moveStart;
-    int _timer;
 };
 
 #endif

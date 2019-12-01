@@ -1,149 +1,44 @@
 #include "PotGraph.h"
 
 /*
-   Constructor
+    Constructor
 */
 PotGraph::PotGraph(void) {
-}
-
-PotGraph::PotGraph(short int type, int8_t pin, int max, String label) {
-  _type = type;
-  _pin = pin;
-  _max = max;
-  _label = label;
-
-//  // Establish whatever pin reads you need
-  pinMode(_pin, INPUT);
-}
-
-/*
- * Attach screen
- */
-void PotGraph::attach(Adafruit_SSD1306 &screen) {
-  screen.display();
-  delay(1000);
-  clear(screen);
-  splash(screen);
-  delay(2000);
-  clear(screen);
-  Serial.println("Screen attached");
-}
-
-/*
-   Clean screen
-*/
-void PotGraph::clear(Adafruit_SSD1306 &screen) {
-  screen.clearDisplay();
-  screen.display();
-}
-
-/*
-   Splash screen
-*/
-void PotGraph::splash(Adafruit_SSD1306 &screen) {
-  screen.setTextSize(1);
-  screen.setTextColor(SSD1306_WHITE);
-  screen.setCursor(0, 0);
-  screen.print("PotGraph v1.0\nCopyright (c) 2019\nBy MarlovaSoft Tm");
-  screen.display();
-}
-
-/**
-   Read the value
-*/
-int PotGraph::read() {
-  int t = millis();
-  int _rawValue = analogRead(_pin);
-
-  // Prevent falsely detecting movement on the first iteration
-  if (_prevValue == -9999) {
-    _prevValue = _rawValue;
-  }
-
-  Serial.print(_rawValue);
-  Serial.print("\t");
-
-  // Eliminate noise due to small variations of resistance
-  int diff = _prevValue - _rawValue;
-  Serial.print(diff);
-  Serial.print("\t");
-  if (diff < -6 || diff > 6) { //@todo make noise configurable
-    //_value = _rawValue;
-    Serial.print(diff);
-    Serial.print("\t");
-  }
-  else {
-    Serial.print("N");
-    Serial.print("\t");
-    _rawValue = _prevValue;
-  }
-
-  // Detect change start
-  if (_prevValue != _rawValue) {
-    _prevValue = _rawValue;
-    _moveStart = t;
-    _timer = t + 500; // Set timer
-    //_drawing = true;
-  }
-
-  // Detect change finished
-  if (_moveStart != 0 && _timer < t) {
-    _rawValue = _prevValue = analogRead(_pin);
-    _moveStart = 0;
-    //_drawing = false;
-    _redraw = true;
-    // clear()
-  }
-
-  _value = map(_rawValue, 0, 1023, _max, 1);
-
-  Serial.print(_value);
-  Serial.print("\t");
-
-  return _value;
-}
-
-/**
-   Check if potentiometer is being moved
-*/
-bool PotGraph::knobMoving()
-{
-  return _moveStart != 0;
 }
 
 /*
    Draw graphs
 */
-void PotGraph::draw(Adafruit_SSD1306 &screen) {
-  if (!knobMoving()) {
-    return;
-  }
-//  if (_drawing) {
+void PotGraph::draw(Adafruit_SSD1306 &screen, Pot &pot) {
+//  if (pot.knobMoving()) {
 //    return;
 //  }
+  //  if (_drawing) {
+  //    return;
+  //  }
 
-  switch (_type) {
+  switch (pot.type) {
     case PotGraphTypeDial:
-    {
-      int inc = 1; // Calculate increment
-      if (_max > 10) {
-        inc = _max / 10;
+      {
+        int inc = 1; // Calculate increment
+        if (pot.max > 10) {
+          inc = pot.max / 10;
+        }
+        drawDial(screen, pot.value, 65, 53, 25, 0, pot.max, inc, 0, 180, pot.label, _redraw);
       }
-      drawDial(screen, _value, 65, 53, 25, 0, _max, inc, 0, 180, _label, _redraw);
-    }
-    break;
+      break;
 
     case PotGraphTypeChartV:
-    {
-      drawBarChartV(screen, _value, 10, 45, 100, 20, 0, 5, 1, 0, _label, _redraw);
-    }
-    break;
+      {
+        drawBarChartV(screen, pot.value, 10, 45, 100, 20, 0, 5, 1, 0, pot.label, _redraw);
+      }
+      break;
 
     case PotGraphTypeChartH:
-    {
-      drawBarChartH(screen, _value, 10, 45, 100, 20, 0, 5, 1, 0, _label, _redraw);
-    }
-    break;
+      {
+        drawBarChartH(screen, pot.value, 10, 45, 100, 20, 0, 5, 1, 0, pot.label, _redraw);
+      }
+      break;
 
     default:
       break;
