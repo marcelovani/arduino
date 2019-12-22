@@ -7,12 +7,11 @@ Pot::Pot(void) {
 }
 
 Pot::Pot(short int type, int8_t pin, int max, String label) {
-  //_type = type;
-  //_pin = pin;
-  //_max = max;
-  //_label = label;
+  _type = type;
+  _pin = pin;
+  _max = max;
+  _label = label;
 
-  //  // Establish whatever pin reads you need
   pinMode(pin, INPUT);
 }
 
@@ -21,28 +20,28 @@ Pot::Pot(short int type, int8_t pin, int max, String label) {
 */
 int Pot::read() {
   int t = millis();
-  int _rawValue = analogRead(pin);
+  int _rawValue = analogRead(_pin);
 
   // Prevent falsely detecting movement on the first iteration
   if (_prevValue == -9999) {
     _prevValue = _rawValue;
   }
 
-  Serial.print(_rawValue);
-  Serial.print("\t");
+//  Serial.print(_rawValue);
+//  Serial.print("\t");
 
   // Eliminate noise due to small variations of resistance
   int diff = _prevValue - _rawValue;
-  Serial.print(diff);
-  Serial.print("\t");
+//  Serial.print(diff);
+//  Serial.print("\t");
   if (diff < -6 || diff > 6) { //@todo make noise configurable
     //_value = _rawValue;
-    Serial.print(diff);
-    Serial.print("\t");
+//    Serial.print(diff);
+//    Serial.print("\t");
   }
   else {
-    Serial.print("N");
-    Serial.print("\t");
+//    Serial.print("N");
+//    Serial.print("\t");
     _rawValue = _prevValue;
   }
 
@@ -56,19 +55,56 @@ int Pot::read() {
 
   // Detect change finished
   if (_moveStart != 0 && _timer < t) {
-    _rawValue = _prevValue = analogRead(pin);
+    _rawValue = _prevValue = analogRead(_pin);
     _moveStart = 0;
     //_drawing = false;
     //_redraw = true;
     // clear()
   }
 
-  value = map(_rawValue, 0, 1023, max, 1);
+  _value = map(_rawValue, 0, 1023, _max, 1);
 
-  Serial.print(value);
-  Serial.print("\t");
+  return _value;
+}
 
-  return value;
+/*
+ * Return the pot pin
+ */
+int Pot::getPin()
+{
+  return _pin;
+}
+
+/*
+ * Return the pot type
+ */
+int Pot::getType()
+{
+  return _type;
+}
+
+/*
+ * Return the pot value
+ */
+int Pot::getValue()
+{
+  return _value;
+}
+
+/*
+ * Return the pot max value
+ */
+int Pot::getMax()
+{
+  return _max;
+}
+
+/*
+ * Return the pot label value
+ */
+String Pot::getLabel()
+{
+  return _label;
 }
 
 /**

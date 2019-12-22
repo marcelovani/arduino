@@ -3,16 +3,20 @@
 #include <SoftwareSerial.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "xyGraph.h"
 #include "PotGraph.h"
 #include "Pot.h"
 #include "config.h"
 
+int ClearScreen = false;
+
 Adafruit_SSD1306 screen(LCD_WIDTH, LCD_HEIGHT, &Wire, LCD_RST_PIN);
 
+xyGraph graph;
 PotGraph potGraph;
 
 Pot samplesPot  (PotGraphTypeDial,   A0, 20,   "Samples     ideal:10"); // Create an instance of Pot on pin 14 and max of 20 ideal 10
-//Pot rangePot    (PotGraphTypeDial,   A1, 10,   "Range        ideal:4"); // Create an instance of Pot on pin 15 and max of 10 ideal 4
+Pot rangePot    (PotGraphTypeDial,   A1, 10,   "Range        ideal:4"); // Create an instance of Pot on pin 15 and max of 10 ideal 4
 //@todo this library is too heavy to be instantiated 4 times
 // need to split pot and PotGraph, instantiate potGraph only once
 //Pot delayPot    (PotGraphTypeDial,   A2, 10,   "Delay       ideal:20"); // Create an instance of Pot on pin 16 and max of 40 ideal 20
@@ -30,6 +34,7 @@ void setup() {
   screen.display();
   splash(screen);
   delay(2000);
+  screen.clearDisplay();
   screen.display();
   Serial.println("Screen attached");
 
@@ -44,18 +49,30 @@ void loop() {
   Serial.print("\t");
 
   samplesPot.read();
-//  rangePot.read();
+  rangePot.read();
 //  delayPot.read();
 //  thresholdPot.read();
 
-  if (knobsMoving()) {
+  if (samplesPot.knobMoving()) {
     potGraph.draw(screen, samplesPot);
-//    rangePot.draw(screen);
-//    delayPot.draw(screen);
-//    thresholdPot.draw(screen);
+    Serial.print(samplesPot.getValue());
+    Serial.print("\t");
+  } else if (rangePot.knobMoving()) {
+    potGraph.draw(screen, rangePot);
+    Serial.print(rangePot.getValue());
+    Serial.print("\t");
+//  } else if (thresholdPot.knobMoving()) {
+//    potGraph.draw(screen, thresholdPot);
+//  } else if (delayPot.knobMoving()) {
+//    potGraph.draw(screen, delayPot);
   } else {
     // Display x/y
+    //delay(1000);
+//    screen.clearDisplay();
+//    screen.display();
+    //graph.draw(screen, samplesPot.getValue()); //@todo use accelerometer value
   }
+  
   Serial.println(" ");
 }
 
@@ -64,7 +81,7 @@ void loop() {
  */
 bool knobsMoving()
 {
-  return samplesPot.knobMoving();// || rangePot.knobMoving();// || thresholdPot.knobMoving() || delayPot.knobMoving();
+  return samplesPot.knobMoving() || rangePot.knobMoving();// || thresholdPot.knobMoving() || delayPot.knobMoving();
 }
 
 /*

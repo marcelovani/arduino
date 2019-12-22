@@ -5,11 +5,6 @@
 
 class Pot {
   public:
-    int8_t type;
-    int8_t pin;
-    short int max;
-    String label;
-    short int value;
 
     Pot(void);
 
@@ -17,10 +12,26 @@ class Pot {
 
     int read();
 
+    int getType();
+
+    int getValue();
+
+    int getMax();
+
+    int getPin();
+
+    String getLabel();
+
     // Check if potentiometer is being moved
     bool knobMoving();
 
-  private:    
+  private:
+    int8_t _type;
+    int8_t _pin;
+    short int _max;
+    String _label;
+    short int _value;
+
     int _prevValue=-9999;
     int _moveStart;
     int _timer;
