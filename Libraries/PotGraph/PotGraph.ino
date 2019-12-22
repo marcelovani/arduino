@@ -14,24 +14,6 @@ PotGraph rangePot    (PotGraphTypeDial,   A1, 10,   "Range        ideal:4"); // 
 //PotGraph delayPot    (PotGraphTypeDial,   A2, 10,   "Delay       ideal:20"); // Create an instance of Pot on pin 16 and max of 40 ideal 20
 //PotGraph thresholdPot(PotGraphTypeChartH, A3, 1000, "Threshold  ideal:600"); // Create an instance of Pot on pin 17 and max of 1K ideal 600
 
-#ifdef __arm__
-// should use uinstd.h to define sbrk but Due causes a conflict
-extern "C" char* sbrk(int incr);
-#else  // __ARM__
-extern char *__brkval;
-#endif  // __arm__
-
-int freeMemory() {
-  char top;
-#ifdef __arm__
-  return &top - reinterpret_cast<char*>(sbrk(0));
-#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
-  return &top - __brkval;
-#else  // __arm__
-  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
-#endif  // __arm__
-}
-
 void setup() {
   Serial.begin(9600);
   delay(1000);
@@ -59,21 +41,19 @@ void loop() {
 //  delayPot.read();
 //  thresholdPot.read();
 
-  if (knobsMoving()) {
+  if (samplesPot.knobMoving()) {
     samplesPot.draw(screen);
+  } else if (rangePot.knobMoving()) {
     rangePot.draw(screen);
-//    delayPot.draw(screen);
+//  } else if (thresholdPot.knobMoving()) {
 //    thresholdPot.draw(screen);
+//  } else if (delayPot.knobMoving()) {
+//    delayPot.draw(screen);
   } else {
     // Display x/y
+    delay(1000);
+    screen.clearDisplay();
+    screen.display();
   }
   Serial.println(" ");
-}
-
-/*
- * Check if any knob is being moved
- */
-bool knobsMoving()
-{
-  return samplesPot.knobMoving() || rangePot.knobMoving();// || thresholdPot.knobMoving() || delayPot.knobMoving();
 }
