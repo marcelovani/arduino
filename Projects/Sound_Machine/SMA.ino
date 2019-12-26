@@ -30,6 +30,11 @@ int * getSmaData()
  * Calculates the simple moving average
  */
 void calcSma() {
+  if (knobsMoving()) {
+    // Divert logic to display knobs
+    return;
+  }
+  
   int * data = getAccelerationData();
   short int s = getSamples();
   short int r = getRange();

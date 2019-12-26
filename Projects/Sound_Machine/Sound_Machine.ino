@@ -3,31 +3,37 @@
 
 void setup()
 {
-    // LCD
-    //LCDsetup();
+  // LCD
+  LCDsetup();
+  //AdaFruitLCDSetup();
 
-    // LED
-    //setupLED();
+  // LED
+  //setupLED();
 
-    // Player
-    //setupPlayer();
+  // Player
+  setupPlayer();
 
-    // Accelerometer
-    calibrateACC();
+  // Accelerometer
+  calibrateACC();
 
-    //detectChange(); //temp
+  detectChange(); //temp
 }
 
 void loop()
 {
-    readAccX();
-    calcSma();
-    detectChange();
-    plot();
-    //LCDloop();
+  Serial.print(freeMemory());
+  Serial.print("\t");
+
+  readKnobs();
+  readAccX();
+  calcSma();
+  detectChange();
+  LCDloop();
+  plot();
 }
 
 void plot()
 {
-    Serial.println("");
+  //displayKnobs();
+  Serial.println("");
 }
