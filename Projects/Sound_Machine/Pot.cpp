@@ -25,21 +25,12 @@ int Pot::read() {
     _prevValue = _rawValue;
   }
 
-//  Serial.print(_rawValue);
-//  Serial.print("\t");
-
   // Eliminate noise due to small variations of resistance
   int diff = _prevValue - _rawValue;
-//  Serial.print(diff);
-//  Serial.print("\t");
   if (diff < -6 || diff > 6) { //@todo make noise configurable
-    //_value = _rawValue;
-//    Serial.print(diff);
-//    Serial.print("\t");
+    // Do nothing
   }
   else {
-//    Serial.print("N");
-//    Serial.print("\t");
     _rawValue = _prevValue;
   }
 
@@ -48,16 +39,12 @@ int Pot::read() {
     _prevValue = _rawValue;
     _moveStart = t;
     _timer = t + 500; // Set timer
-    //_drawing = true;
   }
 
   // Detect change finished
   if (_moveStart != 0 && _timer < t) {
     _rawValue = _prevValue = analogRead(_pin);
     _moveStart = 0;
-    //_drawing = false;
-    //_redraw = true;
-    // clear()
   }
 
   _value = map(_rawValue, 0, 1023, _max, 1);

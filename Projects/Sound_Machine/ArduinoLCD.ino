@@ -50,25 +50,8 @@ void LCDsetup(void) {
   // flip screen, if required
   //u8g.setRot180();
 
-  splash();
-
   x = 0;
   clearXY();
-}
-
-/*
-   Splash screen
-*/
-void splash() {
-  u8g.firstPage();
-  do {
-    u8g.setFontPosTop();
-    u8g.setFont(u8g_font_5x7r);
-    u8g.drawStr( 0, 10,  " Sound Machine v1.0");
-    u8g.drawStr( 0, 20, "Copyright (c) 2019/20");
-    u8g.drawStr( 0, 30, "  By MarlovaSoft Tm");
-  } while ( u8g.nextPage() );
-  delay(1000);
 }
 
 void LCDloop(void) {

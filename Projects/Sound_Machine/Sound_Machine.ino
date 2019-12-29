@@ -5,10 +5,9 @@ void setup()
 {
   // LCD
   LCDsetup();
-  //AdaFruitLCDSetup();
 
   // LED
-  //setupLED();
+  setupLED();
 
   // Player
   setupPlayer();
@@ -16,7 +15,7 @@ void setup()
   // Accelerometer
   calibrateACC();
 
-  detectChange(); //temp
+  detectChange();
 }
 
 void loop()

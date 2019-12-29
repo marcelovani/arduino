@@ -24,14 +24,10 @@ void ledOff()
 // @todo display LED bar
 void ledBar(float perc) {
   perc = perc;
-  //Serial.print("\tLED: ");
   if (ledStatus == 1) {
-    //Serial.print("ON ");
     Serial.print(getCalibrationX() + getThreshold());
   }
   else {
     Serial.print(0);
-    //Serial.print("OFF ");
   }
-  //Serial.println(", ");
 }

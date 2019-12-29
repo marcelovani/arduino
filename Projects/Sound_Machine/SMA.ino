@@ -52,9 +52,6 @@ void calcSma() {
   }
   avg = sum / r;
 
-//  char buff[6];
-//  sprintf(buff, "%3d", avg);
-//  Serial.print(String("AVG: ") + buff);
   // Clear noise
   int diff = data[i] - data[i-1];
   if (diff < -5 || diff > 5) {
@@ -90,7 +87,6 @@ void detectChange() {
   short int prev = smaData[s-3];
   short int curr = smaData[s-2];
   short int next = smaData[s-1];
-  String playLabel = "";
 
 	if (curr > prev) {
     // Perc is used to display LEDs and to calculate the volume.
@@ -117,9 +113,7 @@ void detectChange() {
 	}
 	else if (curr > threshold && peak > curr) {
 		// Going down.
-		if (playSound == 0 && isPlaying() == false) {
-      playLabel = "PLAY";
-      
+		if (playSound == 0 && isPlaying() == false) {      
 			// Play sound
       setVolume(perc);
       play();
@@ -134,18 +128,6 @@ void detectChange() {
   Serial.print(",");
   Serial.print(perc);
   Serial.print(",");
-
-//  char buff[6];
-//  sprintf(buff, "%3d", peak);
-//  Serial.print(String("\tPeak: ") + buff);
-//
-//  sprintf(buff, "%3d", diff);
-//  Serial.print(String("\tDiff: ") + buff);
-//  
-//  Serial.print("\tPerc: ");
-//  Serial.print(perc);
-  //Serial.print("%");
   
   ledBar(perc);
-//  Serial.print("\t" + playLabel);
 }

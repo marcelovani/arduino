@@ -1,12 +1,5 @@
-//#include "Arduino.h"
-//#include <Wire.h>
-//#include "libraries/PotGraph/xyGraph.h"
-//#include "libraries/PotGraph/PotGraph.h"
-//#include "libraries/PotGraph/Pot.h"
 #include "Pot.h"
 #include "U8glib.h"
-
-//U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);
 
 Pot samplesPot  (A0, 20);   // "Samples     ideal:10" Create an instance of Pot on pin 14 and max of 20 ideal 10
 Pot rangePot    (A1, 10);   // "Range        ideal:4" Create an instance of Pot on pin 15 and max of 10 ideal 4

@@ -18,16 +18,8 @@ int getAccX()
 int * getAccelerationData()
 {
   //  Test data
-  //  accelerationData[0] = 1;
-  //  accelerationData[1] = 2;
-  //  accelerationData[2] = 3;
-  //  accelerationData[3] = 4;
-  //  accelerationData[4] = 5;
-  //  accelerationData[5] = 6;
-  //  accelerationData[6] = 7;
-  //  accelerationData[7] = 8;
-  //  accelerationData[8] = 9;
-  
+  //  accelerationData[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 );
+
   return accelerationData;
 }
 
