@@ -22,7 +22,7 @@ void ledOff()
 
 // Display LED bar depending on Acceleration
 // @todo display LED bar
-void ledBar(float perc) {
+void ledBar(short int perc) {
   perc = perc;
   if (ledStatus == 1) {
     Serial.print(getCalibrationX() + getThreshold());

@@ -6,6 +6,10 @@ Pot rangePot    (A1, 10);   // "Range        ideal:4" Create an instance of Pot 
 Pot delayPot    (A2, 40);   // "Delay       ideal:20" Create an instance of Pot on pin 16 and max of 40 ideal 20
 Pot thresholdPot(A3, 1000); // "Threshold  ideal:600" Create an instance of Pot on pin 17 and max of 1K ideal 600
 
+void setupKnob() {
+  readKnobs();
+}
+
 void readKnobs() {
   samplesPot.read();
   rangePot.read();

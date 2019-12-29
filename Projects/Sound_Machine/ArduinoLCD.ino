@@ -24,9 +24,24 @@ void drawXY() {
     return;
   }
 
-  y[x] = map(getSma(), 0, 1023, LCD_HEIGHT - 1, 0) - LCD_HEIGHT / 2 ;
+  int value = getSma() + getCalibrationX();
+  if (value < 0) {
+    return;
+  }
+
+  y[x] = map(value, 0, 1023, LCD_HEIGHT - 1, 0) - LCD_HEIGHT / 2 ;
 
   u8g.firstPage();
+  char str[24];
+  sprintf(str, "Off:%d Tri:%d Perc:%d", getCalibrationX(), getCalibrationX() + getThreshold(), (int) getPerc());
+  Serial.print("\t");
+  Serial.print(str);
+  Serial.print("\t");
+  Serial.print(getPerc());
+  Serial.print("\t");
+  u8g.setFontPosTop();
+  u8g.setFont(u8g_font_5x7r);
+  u8g.drawStr(0, 0, str);
   do {
     u8g.drawPixel(0, y[0]);
     for (int i = 1; i < LCD_WIDTH; i++) {

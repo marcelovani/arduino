@@ -1,8 +1,16 @@
 // Sound Machine
 // This app emulates the sound of Turbo when the car accelerates
+//#include <timer.h>
+//auto timer = timer_create_default(); // create a timer with default settings
+#include <dmtimer.h>
+
+DMTimer recalibration(6 * 1000000); // Create a timer to recalibratevevery 6 seconds
 
 void setup()
 {
+  // Knobs
+  setupKnob();
+
   // LCD
   LCDsetup();
 
@@ -13,9 +21,9 @@ void setup()
   setupPlayer();
 
   // Accelerometer
-  calibrateACC();
+  ACCSetup();
 
-  detectChange();
+  //detectChange();
 }
 
 void loop()
@@ -27,8 +35,14 @@ void loop()
   readAccX();
   calcSma();
   detectChange();
+
   LCDloop();
   plot();
+
+  if (recalibration.isTimeReached() && SMAMoving() == false) {
+    Serial.println("Calibrate");
+    recalibrateACC();
+  }
 }
 
 void plot()
