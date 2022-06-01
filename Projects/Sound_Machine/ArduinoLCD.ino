@@ -9,6 +9,7 @@ U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_DEV_0);
 
 const int LCD_WIDTH = 128;
 const int LCD_HEIGHT = 64;
+int LCD_ENABLED = 1;
 
 int x;
 int y[LCD_WIDTH];
@@ -24,6 +25,10 @@ void drawXY() {
     return;
   }
 
+  if (!LCD_ENABLED) {
+    return;
+  }
+  
   int value = getSma() + getCalibrationX();
   if (value < 0) {
     return;
@@ -32,13 +37,6 @@ void drawXY() {
   y[x] = map(value, 0, 1023, LCD_HEIGHT - 1, 0) - LCD_HEIGHT / 2 ;
 
   u8g.firstPage();
-  char str[24];
-  sprintf(str, "Off:%d Tri:%d Perc:%d", getCalibrationX(), getCalibrationX() + getThreshold(), (int) getPerc());
-  Serial.print("\t");
-  Serial.print(str);
-  Serial.print("\t");
-  Serial.print(getPerc());
-  Serial.print("\t");
   u8g.setFontPosTop();
   u8g.setFont(u8g_font_5x7r);
   u8g.drawStr(0, 0, str);
@@ -72,7 +70,15 @@ void LCDsetup(void) {
 void LCDloop(void) {
   drawXY();
 
-  displayKnobs();
+  // displayKnobs();
 
   //delay(10);
+}
+
+void LCDenable(void) {
+  LCD_ENABLED = 1;
+}
+
+void LCDdisable(void) {
+  LCD_ENABLED = 0;
 }

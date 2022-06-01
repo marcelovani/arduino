@@ -1,10 +1,11 @@
 #include "Pot.h"
 #include "U8glib.h"
 
-Pot samplesPot  (A0, 20);   // "Samples     ideal:10" Create an instance of Pot on pin 14 and max of 20 ideal 10
-Pot rangePot    (A1, 10);   // "Range        ideal:4" Create an instance of Pot on pin 15 and max of 10 ideal 4
-Pot delayPot    (A2, 40);   // "Delay       ideal:20" Create an instance of Pot on pin 16 and max of 40 ideal 20
-Pot thresholdPot(A3, 1000); // "Threshold  ideal:600" Create an instance of Pot on pin 17 and max of 1K ideal 600
+Pot thresholdPot(A3, 1, 1000); // "Threshold  ideal:600" Create an instance of Pot on pin 17 and min 1 max 1K ideal 600
+Pot delayPot    (A2, 1, 40);   // "Delay       ideal:20" Create an instance of Pot on pin 16 and min 1 max 40 ideal 20
+Pot samplesPot  (A0, 10, 19);  // "Samples     ideal:10" Create an instance of Pot on pin 14 and min 10 max 19 ideal 10
+// Range cannot be greater than samples, see SMA
+Pot rangePot    (A1, 2, 10);   // "Range       ideal:4"  Create an instance of Pot on pin 15 and min 2 max 10 ideal 4
 
 void setupKnob() {
   readKnobs();
@@ -15,35 +16,47 @@ void readKnobs() {
   rangePot.read();
   delayPot.read();
   thresholdPot.read();
+
+//  Serial.print("Thres POT:"); Serial.print(getThreshold()); Serial.print(" ");
+//  Serial.print("Delay POT:"); Serial.print(getDelay());     Serial.print(" ");
+//  Serial.print("Sampl POT:"); Serial.print(getSamples());   Serial.print(" ");
+//  Serial.print("Range POT:"); Serial.print(getRange());     Serial.print("\t");
 }
 
 void displayKnobs() {
+  if (!LCD_ENABLED) {
+    return;
+  }
+
   if (!knobsMoving()) {
     return;
   }
 
-  char str[24];
   u8g.firstPage();
   u8g.setFontPosTop();
   u8g.setFont(u8g_font_5x7r);
 
-  do {
+  do {  
     if (samplesPot.knobMoving()) {
       sprintf(str, "Samples: %d    ideal: 10", samplesPot.getValue());
-      u8g.drawStr(0, 0, str);
-      Serial.print(samplesPot.getValue()); Serial.print("\t");
+      if (LCD_ENABLED) {
+        u8g.drawStr(0, 0, str);
+      }
     } else if (rangePot.knobMoving()) {
       sprintf(str, "Range: %d       ideal: 4", rangePot.getValue());
-      u8g.drawStr(0, 0, str);
-      Serial.print(rangePot.getValue()); Serial.print("\t");
+      if (LCD_ENABLED) {
+        u8g.drawStr(0, 0, str);
+      }
     } else if (thresholdPot.knobMoving()) {
       sprintf(str, "Threshold: %d ideal: 600", thresholdPot.getValue());
-      u8g.drawStr(0, 0, str);
-      Serial.print(thresholdPot.getValue()); Serial.print("\t");
+      if (LCD_ENABLED) {
+        u8g.drawStr(0, 0, str);
+      }
     } else if (delayPot.knobMoving()) {
       sprintf(str, "Delay: %d     ideal: 20", delayPot.getValue());
-      u8g.drawStr(0, 0, str);
-      Serial.print(delayPot.getValue()); Serial.print("\t");
+      if (LCD_ENABLED) {
+        u8g.drawStr(0, 0, str);
+      }
     }
   } while (u8g.nextPage());
 }

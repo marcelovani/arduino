@@ -12,12 +12,14 @@ void setupLED()
 void ledOn()
 {
     ledStatus = 1;
+    //Serial.print("LED:"); Serial.print(ledStatus); Serial.print(" ");
 }
 
 // LED off
 void ledOff()
 {
     ledStatus = 0;
+    //Serial.print("LED:"); Serial.print(ledStatus); Serial.print(" ");
 }
 
 // Display LED bar depending on Acceleration
@@ -25,9 +27,10 @@ void ledOff()
 void ledBar(short int perc) {
   perc = perc;
   if (ledStatus == 1) {
-    Serial.print(getCalibrationX() + getThreshold());
+    sprintf(str, "Thre: %d", getCalibrationX() + getThreshold());
   }
   else {
-    Serial.print(0);
+    sprintf(str, "Thre: %d", 0);
   }
+  //Serial.print("Perc:"); Serial.print(perc); Serial.print("\t");
 }

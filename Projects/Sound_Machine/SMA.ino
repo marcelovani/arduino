@@ -10,6 +10,8 @@
    //=>   │       │       └─(3+4+5+6)/4
    //=>   │       └─(2+3+4+5)/4
    //=>   └─(1+2+3+4)/4
+
+   * Range parameter cannot be greater than number of samples.
 */
 int smaData[20] = {}; // Storage SMA calculations
 int sma = 0;
@@ -17,8 +19,6 @@ int sma = 0;
 bool isMoving = false;
 
 bool SMAMoving() {
-  Serial.print(isMoving);
-  Serial.print("\t");
   return isMoving;
 }
 
@@ -34,20 +34,27 @@ int * getSmaData()
   return smaData;
 }
 
+short int avg = 0;
+short int prevAvg = 0;
+  
 /*
    Calculates the simple moving average
 */
 void calcSma() {
   if (knobsMoving()) {
     // Divert logic to display knobs
-    return;
+    //return;
   }
 
   int * data = getAccelerationData();
   short int s = getSamples();
   short int r = getRange();
+  // Make sure range is not bigger than number of samples.
+  if (r > s) {
+    r = s;
+  }
   short int sum = 0;
-  short int avg = 0;
+
 
   // Start from total of samples minus the range.
   // i.e. Samples=9, Range=3
@@ -61,14 +68,11 @@ void calcSma() {
   avg = sum / r;
 
   // Clear noise
-  int diff = data[i] - data[i - 1]; //@todo we need to map all values from accelerometer data and knobs to the screen height, this way we normalize the data and it will be easier to compare diff
-  int threshold;
-  threshold = map(getThreshold(), 0, 1023, 0, 30);
-  Serial.print(threshold);
-  Serial.print("% \t diff ");
-  Serial.print(diff);
-  Serial.print("\t");
-  if (diff < (threshold * -1) || diff > threshold) {
+  int diff = abs(prevAvg - avg); //@todo we need to map all values from accelerometer data and knobs to the screen height, this way we normalize the data and it will be easier to compare diff
+  prevAvg = avg;
+
+  int threshold = map(getThreshold(), 0, 1023, 0, r);
+  if (diff > threshold) {
     // Push to the end of the array
     isMoving = true;
     pushSmaData(avg);
@@ -76,6 +80,11 @@ void calcSma() {
   else {
     isMoving = false;
   }
+  
+//  Serial.print("isMoving:"); Serial.print(isMoving); Serial.print(" ");
+//  Serial.print("Thre:");     Serial.print(threshold); Serial.print(" ");
+//  Serial.print("Diff:");     Serial.print(diff); Serial.print(" ");
+//  Serial.print("Avg:");     Serial.print(avg + getCalibrationX()); Serial.print("\t");
 }
 
 // Push to the end of the array
@@ -103,24 +112,29 @@ short int getPerc() {
   return perc;
 }
 
+void calcPerc(short int curr, int offset) {
+  perc = abs((curr - getCalibrationX()) * 100 / offset);
+}
+
 void detectChange() {
   short int s = getSamples();
-  int threshold = getThreshold();
-  short int prev = smaData[s - 3] + getCalibrationX();
-  short int curr = smaData[s - 2] + getCalibrationX();
+  int offset = getThreshold() + getCalibrationX();
+  //int offset = map(getThreshold(), 0, 1023, 0, 100);
+  // Get samples from begining, middle and end of data.
+  short int prev = smaData[0] + getCalibrationX();
+  short int curr = smaData[s / 2] + getCalibrationX();
   short int next = smaData[s - 1] + getCalibrationX();
 
   if (curr > prev) {
     // Perc is used to display LEDs and to calculate the volume.
-    perc = 0;
-    diff = curr - threshold;
-    if (diff > 0) {
-      perc = diff / threshold * 100;
-    }
+    //perc = 0; // @todo broken. Calculate percentage based on peak value.
+    //diff = abs(curr - offset);
+    //perc = diff / offset * 100;
 
     // Going up
     if (firstUp == -1) {
       firstUp = curr;
+      peak = curr;
       // @todo only reset playSound after few seconds since last play.
       playSound = 0;
       ledOff();
@@ -128,28 +142,39 @@ void detectChange() {
 
     // Detect peak
     if (curr > next) {
-      if (curr >= threshold) {
+      //if (curr >= offset) {
         peak = curr;
-      }
+      //}
     }
   }
-  else if (curr > threshold && peak > curr) {
+  else if (peak > curr && curr > offset) {
     // Going down.
     if (playSound == 0 && isPlaying() == false) {
+      calcPerc(curr, offset);
+      ledOn();
+      peak = curr;
       // Play sound
       setVolume(perc);
       play();
-      ledOn();
       firstUp = -1;
       playSound = 1;
     }
-    peak = next;
+//    else {
+//      peak = next;
+//    }
   }
+  calcPerc(curr, offset);
 
-  Serial.print(getSma());
-  Serial.print(",");
-  Serial.print(perc);
-  Serial.print(",");
+  Serial.print("Offset:");     Serial.print(offset); Serial.print(" ");
+//  Serial.print("SMA:");  Serial.print(getSma());  Serial.print(" ");
+  //Serial.print("Diff:"); Serial.print(diff);      Serial.print(" ");
+  //Serial.print("Offset:"); Serial.print(offset); Serial.print(" ");
+//  Serial.print("S / 2:");  Serial.print(s / 2);  Serial.print(" ");
+//  Serial.print("Prev:");  Serial.print(prev);  Serial.print(" ");
+  Serial.print("Curr:");  Serial.print(curr);  Serial.print(" ");
+//  Serial.print("Next:");  Serial.print(next);  Serial.print(" ");
+  Serial.print("Peak:");  Serial.print(peak);  Serial.print(" ");
+  //Serial.print("Perc:"); Serial.print(perc);      Serial.print("\t");
 
   ledBar(perc);
 }

@@ -8,7 +8,7 @@ class Pot {
 
     Pot(void);
 
-    Pot(int8_t pin, int max);
+    Pot(int8_t pin, int min, int max);
 
     int read();
 
@@ -25,6 +25,7 @@ class Pot {
 
   private:
     int8_t _pin;
+    short int _min;
     short int _max;
     short int _value;
 

@@ -6,16 +6,19 @@
 
 DMTimer recalibration(6 * 1000000); // Create a timer to recalibratevevery 6 seconds
 
+char str[24];
+
 void setup()
 {
   // Knobs
   setupKnob();
 
   // LCD
-  LCDsetup();
+  // LCDsetup();
+  // LCDdisable();
 
   // LED
-  setupLED();
+  // setupLED();
 
   // Player
   setupPlayer();
@@ -28,25 +31,30 @@ void setup()
 
 void loop()
 {
-  Serial.print(freeMemory());
-  Serial.print("\t");
+  // sprintf(str, "Mem: %d", freeMemory());
+  // Serial.print(str); Serial.print("\t");
 
   readKnobs();
   readAccX();
   calcSma();
   detectChange();
 
-  LCDloop();
+  // LCDloop();
   plot();
 
   if (recalibration.isTimeReached() && SMAMoving() == false) {
-    Serial.println("Calibrate");
+    // sprintf(str, "Calibrate:");
+    // Serial.print(str); Serial.print("\t");
     recalibrateACC();
   }
 }
 
 void plot()
 {
-  //displayKnobs();
+  // displayKnobs();
+  //Serial.print("Calib:");   Serial.print(getCalibrationX()); Serial.print(" ");
+//  Serial.print("Thres:"); Serial.print(getThreshold()); Serial.print(" ");
+  //Serial.print("Offset:");  Serial.print(getCalibrationX() + getThreshold()); Serial.print(" ");
+//  Serial.print("Perc:");    Serial.print((int) getPerc()); Serial.print(" ");
   Serial.println("");
 }

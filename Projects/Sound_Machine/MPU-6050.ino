@@ -63,15 +63,16 @@ void calibrateACC()
     readAccX(); //temp
     calcSma();
     i++;
-    Serial.println(getSma());
+    // sprintf(str, "SMA: %d", getSma());
+    // Serial.print(str); Serial.print("\t");
   } while (!calibration.isTimeReached());
 
   calibrationX = getSma();
   if (calibrationX < 0) {
     calibrationX = calibrationX * -1;
   }
-  Serial.print("Calibration done: ");
-  Serial.println(getCalibrationX());
+  // sprintf(str, "Calibration done: %d", getCalibrationX());
+  // Serial.print(str); Serial.print("\t");
 }
 
 // Read accelerometer
