@@ -7,7 +7,7 @@ DFRobotDFPlayerMini DFPlayer; // Player
 // Initialize player
 void setupPlayer()
 {
-  SoftSerial.begin(SERIAL_BAUD);
+  SoftSerial.begin(9600);
   if (!DFPlayer.begin(SoftSerial))
   { // Use softwareSerial to communicate with mp3.
     Serial.println(F("Unable to begin:"));

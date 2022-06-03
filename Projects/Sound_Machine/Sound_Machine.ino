@@ -5,7 +5,7 @@
 DMTimer recalibration(6 * 1000000); // Create a timer to recalibratevevery 6 seconds
 
 char str[24];
-int SERIAL_BAUD = 9600;
+int SERIAL_BAUD = 19200;
 
 void setup()
 {
