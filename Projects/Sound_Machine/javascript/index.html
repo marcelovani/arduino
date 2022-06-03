@@ -3,6 +3,7 @@
 <html>
 <head>
 <title>Velocity detector</title>
+<!-- Load plotly.js into the DOM -->
 <style>
 output {
     display: block;
@@ -24,11 +25,13 @@ output {
 <script type="text/javascript">
 //<![CDATA[
     // The minimum acceleration to be considered.
-	var threshold = 0.08;
+	var threshold = 7000;
 	// The number of seconds to collect sample.
-	var maxSamples = 4;
+	var maxSamples = 60;
+	// Range is used by SMA
+	var range = 10;
 
-    window.onload = function() {      
+    window.onload = function() {
 		var fileInput = document.getElementById("csv"),
 		    readFile = function () {
 		        var reader = new FileReader();
@@ -36,13 +39,12 @@ output {
 		            var dataPoints = getDataPointsFromCSV(reader.result);
 					clearCharts();
 					showAccelerationChart(dataPoints);
-					showSMAChart(dataPoints, 3);
+					showSMAChart(dataPoints, range);
 
-					var velocityPoints = calcVelocity(dataPoints);
-					showVelocityChart(velocityPoints);
+					// var velocityPoints = calcVelocity(dataPoints);
+					// showVelocityChart(velocityPoints);
 
-					threshold = 0.1;
-					showSMAChart(velocityPoints, 3);
+					// showSMAChart(velocityPoints, 3);
 				};
 		        reader.readAsBinaryString(fileInput.files[0]);
 		    };
@@ -57,8 +59,8 @@ output {
 <body>
 	<p>Select local CSV File:</p>
 	<input id="csv" type="file">
+	<div id='plotty'></div>
 	<output id="out"></output>
-
-	<div id="chartContainer" class"main" style="display:none; height: 370px; max-width: 920px; margin: 0px auto;"></div>
+	<div id="chartContainer" class"main" style="display:none; height: 370px; max-width: 100%; margin: 0px auto;"></div>
 </body>
 </html>

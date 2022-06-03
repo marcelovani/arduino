@@ -10,17 +10,14 @@
 /* ============================================
 I2Cdev device library code is placed under the MIT license
 Copyright (c) 2011 Jeff Rowberg
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -91,9 +88,9 @@ void setup() {
     Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 
     // use the code below to change accel/gyro offset values
-    /*
+    
     Serial.println("Updating internal sensor offsets...");
-    // -76	-2359	1688	0	0	0
+    // -76  -2359 1688  0 0 0
     Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // -76
     Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t"); // -2359
     Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t"); // 1688
@@ -101,19 +98,19 @@ void setup() {
     Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t"); // 0
     Serial.print(accelgyro.getZGyroOffset()); Serial.print("\t"); // 0
     Serial.print("\n");
-    accelgyro.setXGyroOffset(220);
-    accelgyro.setYGyroOffset(76);
-    accelgyro.setZGyroOffset(-85);
-    Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // -76
-    Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t"); // -2359
-    Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t"); // 1688
-    Serial.print(accelgyro.getXGyroOffset()); Serial.print("\t"); // 0
-    Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t"); // 0
-    Serial.print(accelgyro.getZGyroOffset()); Serial.print("\t"); // 0
-    Serial.print("\n");
-    */
+//    accelgyro.setXGyroOffset(220);
+//    accelgyro.setYGyroOffset(76);
+//    accelgyro.setZGyroOffset(-85);
+//    Serial.print(accelgyro.getXAccelOffset()); Serial.print("\t"); // -76
+//    Serial.print(accelgyro.getYAccelOffset()); Serial.print("\t"); // -2359
+//    Serial.print(accelgyro.getZAccelOffset()); Serial.print("\t"); // 1688
+//    Serial.print(accelgyro.getXGyroOffset()); Serial.print("\t"); // 0
+//    Serial.print(accelgyro.getYGyroOffset()); Serial.print("\t"); // 0
+//    Serial.print(accelgyro.getZGyroOffset()); Serial.print("\t"); // 0
+//    Serial.print("\n");
+    
 
-    // configure Arduino LED for
+    // configure Arduino LED pin for output
     pinMode(LED_PIN, OUTPUT);
 }
 
@@ -128,24 +125,24 @@ void loop() {
     #ifdef OUTPUT_READABLE_ACCELGYRO
         // display tab-separated accel/gyro x/y/z values
         Serial.print("a/g:\t");
-        Serial.print(ax); Serial.print("\t");
-        Serial.print(ay); Serial.print("\t");
-        Serial.print(az); Serial.print("\t");
-        Serial.print(gx); Serial.print("\t");
-        Serial.print(gy); Serial.print("\t");
-        Serial.println(gz);
+        Serial.print("ax:"); Serial.print(ax); Serial.print("\t");
+        Serial.print("ay:"); Serial.print(ay); Serial.print("\t");
+        Serial.print("ax:"); Serial.print(az); Serial.print("\t");
+        Serial.print("gx:"); Serial.print(gx); Serial.print("\t");
+        Serial.print("gy:"); Serial.print(gy); Serial.print("\t");
+        Serial.print("gz:"); Serial.println(gz);
     #endif
 
     #ifdef OUTPUT_BINARY_ACCELGYRO
-        Serial.write((uint8_t)(ax >> 8)); Serial.write((uint8_t)(ax & 0xFF));
-        Serial.write((uint8_t)(ay >> 8)); Serial.write((uint8_t)(ay & 0xFF));
-        Serial.write((uint8_t)(az >> 8)); Serial.write((uint8_t)(az & 0xFF));
-        Serial.write((uint8_t)(gx >> 8)); Serial.write((uint8_t)(gx & 0xFF));
-        Serial.write((uint8_t)(gy >> 8)); Serial.write((uint8_t)(gy & 0xFF));
-        Serial.write((uint8_t)(gz >> 8)); Serial.write((uint8_t)(gz & 0xFF));
+        Serial.print("ax:"); Serial.write((uint8_t)(ax >> 8)); Serial.write((uint8_t)(ax & 0xFF));
+        Serial.print("ay:"); Serial.write((uint8_t)(ay >> 8)); Serial.write((uint8_t)(ay & 0xFF));
+        Serial.print("az:"); Serial.write((uint8_t)(az >> 8)); Serial.write((uint8_t)(az & 0xFF));
+        Serial.print("gx:"); Serial.write((uint8_t)(gx >> 8)); Serial.write((uint8_t)(gx & 0xFF));
+        Serial.print("gy:"); Serial.write((uint8_t)(gy >> 8)); Serial.write((uint8_t)(gy & 0xFF));
+        Serial.print("gz:"); Serial.write((uint8_t)(gz >> 8)); Serial.write((uint8_t)(gz & 0xFF));
     #endif
 
     // blink LED to indicate activity
     blinkState = !blinkState;
-    digitalWrite(LED_PIN, blinkState);
+//    digitalWrite(LED_PIN, blinkState);
 }

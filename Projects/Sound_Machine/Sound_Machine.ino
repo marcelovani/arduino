@@ -7,6 +7,7 @@
 DMTimer recalibration(6 * 1000000); // Create a timer to recalibratevevery 6 seconds
 
 char str[24];
+int SERIAL_BAUD = 9600;
 
 void setup()
 {
@@ -23,8 +24,8 @@ void setup()
   // Player
   setupPlayer();
 
-  // Accelerometer
-  ACCSetup();
+  // Accelerometer on Y axis
+  ACCSetup('y');
 
   //detectChange();
 }
@@ -35,7 +36,7 @@ void loop()
   // Serial.print(str); Serial.print("\t");
 
   readKnobs();
-  readAccX();
+  readAcc();
   calcSma();
   detectChange();
 

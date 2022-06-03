@@ -30,7 +30,7 @@ function getDataPointsFromCSV(csv) {
             }
 
     		// Convert dates to timestamp i.e. '2019/09/22 10:14:06.753'
-    		var myDate = new Date(time);
+    		var myDate = new Date("2000/01/01 " + time);
 			var timestamp = myDate.getTime();
 			if (timestamp) {
 				var ss = myDate.getSeconds();
@@ -40,19 +40,19 @@ function getDataPointsFromCSV(csv) {
 
     		time = parseFloat(time);
     		if (time >= 0) {
-        		acceleration = parseFloat(acceleration*-1); // Invert Y data from iphone app
+        		acceleration = parseFloat(acceleration);
 
         		// Normalize time to make it start from 0
 	        	if (offsetTime < 0) {
 	        		offsetTime = time;
 	        	}
 
-                var x = time - offsetTime;
-                if (x <= maxSamples) {
+                var t = time - offsetTime;
+                if (t <= maxSamples) {
                     dataPoints.push({ 
-                        x: x,
+                        t: myDate,
                         y: acceleration,
-                        markerType: 'triangle'
+                        markerType: 'none'
                     });
                 }
             }

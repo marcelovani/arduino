@@ -1,8 +1,8 @@
 'use strict';
 
 // Display simple moving average chart
-function showSMAChart(dataPoints, samples) {
-	var smaPoints = detectChange(dataPoints, samples);
+function showSMAChart(dataPoints, range) {
+	var smaPoints = detectChange(dataPoints, range);
 	var divId = cloneElement('chartContainer');
    	var chart = new CanvasJS.Chart(divId, {
    		theme: "light2", // "light1", "light2", "dark1", "dark2"
@@ -27,7 +27,15 @@ function showSMAChart(dataPoints, samples) {
     chart.render();
 }
 
-function detectChange(data, samples) {
+function getCalibrationX() {
+	return 0;
+}
+
+function calcPerc(curr, offset) {
+	return Math.abs((curr - getCalibrationX()) * 100 / offset);
+}
+
+function detectChange(data, range) {
 	var tmp = [];
 	var smaData = [];
 	var smaPoints = [];
@@ -36,75 +44,73 @@ function detectChange(data, samples) {
 	var playSound = 0;
 	var firstUp = null;
 	var label = '';
+	var offset = threshold;
+
 	for (var i = 0; i < data.length; i++) {
 		tmp[i] = data[i].y;
 	}
-	var smaData = sma(tmp, samples);
-	for (i = 0; i < data.length; i++) {
 
+	var smaData = sma(tmp, range);
+	var samples = data.length;
+
+	for (i = 0; i < samples; i++) {
+		var prev = smaData[i - 2];
 		var curr = smaData[i];
-		var markers = setMarkers(curr, 'circle', '', '');
+		var next = smaData[i + 1];
+
+		var markers = setMarkers(0, 'circle', '', '');
 
 		// Detect change.
-		if (i > 0) {
-			var prev = smaData[i-1];
-			if (i < data.length) {
-				var next = smaData[i+1];
+		if (curr > prev) {
+			// Going up
+			if (firstUp == null) {
+				firstUp = curr;
+				peak = curr;
+				playSound = 0;
 			}
 
-			if (curr > prev) {
-				// Going up
-				if (firstUp == null) {
-					var firstUp = curr;
-					playSound = 0;
-				}
+			label = '^';
+			// // Perc is used to display LEDs and to calculate the volume.
+			// if (curr >= offset) {
+			// 	var diff = curr - offset;
+			// 	perc = Math.floor(diff / offset * 100);
+			// 	label = perc + '%';
+			// }
+			// markers = setMarkers(curr, 'circle', '#00AA00', label);
 
-				label = '^';
-				// Perc is used to display LEDs and to calculate the volume.
-				if (curr >= threshold) {
-					var diff = curr - threshold;
-					perc = Math.floor(diff / threshold * 100);
-					label = perc + '%';
-				}
-				markers = setMarkers(curr, 'circle', '#00AA00', label);
-
-				// Detect peak
-				if (curr > next) {
-					if (curr >= threshold) {
-						peak = curr;
-						markers = setMarkers(curr, 'triangle', '#00FF00', perc + '%');
-					}
-				}
+			// Detect peak
+			if (curr > next) {
+				peak = curr;
+				// markers = setMarkers(curr, 'triangle', '#00FF00', perc + '%');
 			}
-			else if (curr == prev) {
-				// Sliding.
-				markers = setMarkers(curr, 'circle', '#00AA00', '>');
+		}
+		else if (curr == prev) {
+			// Cruising.
+			// markers = setMarkers(curr, 'circle', '#00AA00', '>');
+		}
+		else if (peak > curr && curr > offset) {
+			// Going down.
+			if (playSound == 0) {
+				perc = calcPerc(curr, offset);
+				// markers = setMarkers(curr, 'triangle', '#0000FF', perc + '%');
+				markers = setMarkers(curr, 'circle', '#00FF00', 'S ' + curr);
+				peak = curr;
+
+				// Play sound
+				playSound = 1;
+
+				firstUp = null;
 			}
 			else {
-				// Going down.
-				if (playSound == 0) {
-					markers = setMarkers(curr, 'circle', '#0000FF', 'S ' + curr);
-
-					// Play sound
-					playSound = 1;
-
-					firstUp = null;
-				}
-				else {
-					markers = setMarkers(curr, 'cross', '#FF0000', '-');
-				}
-				peak = next;
+				// markers = setMarkers(curr, 'cross', '#FF0000', '-');
 			}
 		}
-		else {
-			// Initialize peak
-			peak = curr;
-		}
+		perc = calcPerc(curr, offset);
 
     	smaPoints.push({ 
             x: data[i].x,
             y: parseFloat(smaData[i]),
-            indexLabel: markers.indexLabel,
+            // indexLabel: markers.indexLabel,
             markerType: markers.markerType,
             markerColor: markers.markerColor,
             markerSize: markers.markerSize,
@@ -121,7 +127,7 @@ function setMarkers(val, markerType, markerColor, indexLabel) {
 			markerType: markerType,
 			markerColor: markerColor,
 			indexLabel: indexLabel,
-			markerSize: 10
+			markerSize: 6
 		}
 	}
 	else {
@@ -129,7 +135,7 @@ function setMarkers(val, markerType, markerColor, indexLabel) {
 			markerType: null,
 			markerColor: null,
 			indexLabel: null,
-			markerSize: 5
+			markerSize: 1
 		}
 	}
 }
