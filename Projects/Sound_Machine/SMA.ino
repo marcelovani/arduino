@@ -97,10 +97,8 @@ void pushSmaData(int value) {
 }
 
 // Algorithm to detect changes and take actions
-short int firstUp = -1;
 short int peak = 0;
 short int diff = 0;
-short int playSound = 0;
 short int perc = 0;
 
 short int getPerc() {
@@ -108,27 +106,24 @@ short int getPerc() {
 }
 
 void calcPerc(short int curr, int offset) {
-  perc = abs((curr - getCalibrationX()) * 100 / offset);
+  //@todo this is not correct perc = abs((curr - getCalibrationX()) * 100 / offset);
+  perc = 100;
 }
 
+// Init timer.
+DMTimer dfpTimer(1);
+
+// @todo This code is not SMA, should be part of main.
 void detectChange() {
   short int s = getSamples();
-  int offset = getThreshold() + getCalibrationX();
-  //int offset = map(getThreshold(), 0, 1023, 0, 100);
+  int offset = getThreshold() + getCalibrationX(); //@todo rename getCalibrationX() to getCalibration()
+
   // Get samples from begining, middle and end of data.
   short int prev = smaData[0] + getCalibrationX();
   short int curr = smaData[s / 2] + getCalibrationX();
   short int next = smaData[s - 1] + getCalibrationX();
 
   if (curr > prev) {
-    // Going up
-    if (firstUp == -1) {
-      firstUp = curr;
-      peak = curr;
-      // @todo only reset playSound after few seconds since last play.
-      playSound = 0;
-    }
-
     // Detect peak
     if (curr > next) {
       peak = curr;
@@ -136,18 +131,20 @@ void detectChange() {
   }
   else if (peak > curr && curr > offset) {
     // Going down.
-    if (playSound == 0 && isPlaying() == false) {
+    if (isPlaying() == false && dfpTimer.isTimeReached()) {
       calcPerc(curr, offset);
-      peak = curr;
+      // Play sound.
       setVolume(perc);
       play();
-      firstUp = -1;
-      playSound = 1;
+      // Create 2s timer to prevent subsequent sprays.
+      dfpTimer.setInterval(2 * 1000000);
+      peak = curr;
     }
   }
   calcPerc(curr, offset);
 
-  Serial.print("Offset:");     Serial.print(offset); Serial.print(" ");
-  Serial.print("Curr:");  Serial.print(curr);  Serial.print(" ");
-  Serial.print("Peak:");  Serial.print(peak);  Serial.print(" ");
+  Serial.print("Offset:"); Serial.print(offset); Serial.print(" ");
+  Serial.print("Curr:");   Serial.print(curr);   Serial.print(" ");
+  Serial.print("Peak:");   Serial.print(peak);   Serial.print(" ");
+  Serial.print("Perc:");   Serial.print(perc);   Serial.print(" ");
 }
