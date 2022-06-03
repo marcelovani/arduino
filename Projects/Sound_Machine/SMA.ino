@@ -80,11 +80,6 @@ void calcSma() {
   else {
     isMoving = false;
   }
-  
-//  Serial.print("isMoving:"); Serial.print(isMoving); Serial.print(" ");
-//  Serial.print("Thre:");     Serial.print(threshold); Serial.print(" ");
-//  Serial.print("Diff:");     Serial.print(diff); Serial.print(" ");
-//  Serial.print("Avg:");     Serial.print(avg + getCalibrationX()); Serial.print("\t");
 }
 
 // Push to the end of the array
@@ -126,55 +121,33 @@ void detectChange() {
   short int next = smaData[s - 1] + getCalibrationX();
 
   if (curr > prev) {
-    // Perc is used to display LEDs and to calculate the volume.
-    //perc = 0; // @todo broken. Calculate percentage based on peak value.
-    //diff = abs(curr - offset);
-    //perc = diff / offset * 100;
-
     // Going up
     if (firstUp == -1) {
       firstUp = curr;
       peak = curr;
       // @todo only reset playSound after few seconds since last play.
       playSound = 0;
-      ledOff();
     }
 
     // Detect peak
     if (curr > next) {
-      //if (curr >= offset) {
-        peak = curr;
-      //}
+      peak = curr;
     }
   }
   else if (peak > curr && curr > offset) {
     // Going down.
     if (playSound == 0 && isPlaying() == false) {
       calcPerc(curr, offset);
-      ledOn();
       peak = curr;
-      // Play sound
       setVolume(perc);
       play();
       firstUp = -1;
       playSound = 1;
     }
-//    else {
-//      peak = next;
-//    }
   }
   calcPerc(curr, offset);
 
   Serial.print("Offset:");     Serial.print(offset); Serial.print(" ");
-//  Serial.print("SMA:");  Serial.print(getSma());  Serial.print(" ");
-  //Serial.print("Diff:"); Serial.print(diff);      Serial.print(" ");
-  //Serial.print("Offset:"); Serial.print(offset); Serial.print(" ");
-//  Serial.print("S / 2:");  Serial.print(s / 2);  Serial.print(" ");
-//  Serial.print("Prev:");  Serial.print(prev);  Serial.print(" ");
   Serial.print("Curr:");  Serial.print(curr);  Serial.print(" ");
-//  Serial.print("Next:");  Serial.print(next);  Serial.print(" ");
   Serial.print("Peak:");  Serial.print(peak);  Serial.print(" ");
-  //Serial.print("Perc:"); Serial.print(perc);      Serial.print("\t");
-
-  ledBar(perc);
 }

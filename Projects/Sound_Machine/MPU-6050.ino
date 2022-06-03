@@ -44,19 +44,7 @@ void ACCSetup(char _axis) {
     
   axis = _axis;
 
-//  // Initialize board
   Serial.begin(SERIAL_BAUD);
-//  Wire.begin();
-//  Wire.beginTransmission(MPU_ADDR); // Begins a transmission to the I2C slave (GY-521 board)
-//  Wire.write(0x6B); // PWR_MGMT_1 register
-//  Wire.write(0); // set to zero (wakes up the MPU-6050)
-//  Wire.endTransmission(true);
-//
-//  // Acc config
-//  Wire.beginTransmission(MPU_ADDR);
-//  Wire.write(0x1C);             // We want to write to the ACCEL_CONFIG register
-//  Wire.write(0x10);             // Set the register bits as 00010000 (+/- 8g full scale range)
-//  Wire.endTransmission(true);
 
   calibrateACC();
 }
@@ -66,16 +54,8 @@ int getCalibrationX()
   return calibrationX;
 }
 
-// int getAccX()
-// {
-//   return accelerationX;
-// }
-
 int * getAccelerationData()
 {
-  //  Test data
-  //  accelerationData[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
   return accelerationData;
 }
 
@@ -103,29 +83,19 @@ void calibrateACC()
     readAcc(); //temp
     calcSma();
     i++;
-    // sprintf(str, "SMA: %d", getSma());
-    // Serial.print(str); Serial.print("\t");
   } while (!calibration.isTimeReached());
 
   calibrationX = getSma();
   if (calibrationX < 0) {
     calibrationX = calibrationX * -1;
   }
-  // sprintf(str, "Calibration done: %d", getCalibrationX());
-  // Serial.print(str); Serial.print("\t");
 }
 
 // Read accelerometer
 void readAcc()
 {
   int16_t ax, ay, az;
-  
-//  Wire.beginTransmission(MPU_ADDR);
-//  Wire.write(0x3B);
-//  Wire.endTransmission(false);
-//  Wire.requestFrom(MPU_ADDR, 2, true);
 
-  //short int d = getDelay();
   delay(getDelay()); // Add a bit of delay between readings
   accelgyro.getAcceleration(&ax, &ay, &az);
 
@@ -147,8 +117,6 @@ void readAcc()
       Serial.print("No axis specified:"); Serial.print("]t");
       break;
   }
-
-//  Wire.endTransmission(true);
 }
 
 // Push to the end of the array

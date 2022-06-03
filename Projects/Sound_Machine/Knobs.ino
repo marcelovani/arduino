@@ -16,49 +16,17 @@ void readKnobs() {
   rangePot.read();
   delayPot.read();
   thresholdPot.read();
-
-//  Serial.print("Thres POT:"); Serial.print(getThreshold()); Serial.print(" ");
-//  Serial.print("Delay POT:"); Serial.print(getDelay());     Serial.print(" ");
-//  Serial.print("Sampl POT:"); Serial.print(getSamples());   Serial.print(" ");
-//  Serial.print("Range POT:"); Serial.print(getRange());     Serial.print("\t");
 }
 
 void displayKnobs() {
-  if (!LCD_ENABLED) {
-    return;
-  }
+  //  Serial.print("Thres POT:"); Serial.print(getThreshold()); Serial.print(" ");
+  //  Serial.print("Delay POT:"); Serial.print(getDelay());     Serial.print(" ");
+  //  Serial.print("Sampl POT:"); Serial.print(getSamples());   Serial.print(" ");
+  //  Serial.print("Range POT:"); Serial.print(getRange());     Serial.print("\t");
 
   if (!knobsMoving()) {
     return;
   }
-
-  u8g.firstPage();
-  u8g.setFontPosTop();
-  u8g.setFont(u8g_font_5x7r);
-
-  do {  
-    if (samplesPot.knobMoving()) {
-      sprintf(str, "Samples: %d    ideal: 10", samplesPot.getValue());
-      if (LCD_ENABLED) {
-        u8g.drawStr(0, 0, str);
-      }
-    } else if (rangePot.knobMoving()) {
-      sprintf(str, "Range: %d       ideal: 4", rangePot.getValue());
-      if (LCD_ENABLED) {
-        u8g.drawStr(0, 0, str);
-      }
-    } else if (thresholdPot.knobMoving()) {
-      sprintf(str, "Threshold: %d ideal: 600", thresholdPot.getValue());
-      if (LCD_ENABLED) {
-        u8g.drawStr(0, 0, str);
-      }
-    } else if (delayPot.knobMoving()) {
-      sprintf(str, "Delay: %d     ideal: 20", delayPot.getValue());
-      if (LCD_ENABLED) {
-        u8g.drawStr(0, 0, str);
-      }
-    }
-  } while (u8g.nextPage());
 }
 
 bool knobsMoving() {
