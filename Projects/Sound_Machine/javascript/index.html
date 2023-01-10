@@ -1,0 +1,66 @@
+<!--https://canvasjs.com/docs/charts/how-to/create-charts-from-csv/-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Velocity detector</title>
+<!-- Load plotly.js into the DOM -->
+<style>
+output {
+    display: block;
+    margin-top: 4em;
+    font-family: monospace;
+    font-size: .8em;
+}
+</style>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="index.js"></script>
+<script src="datapoints.js"></script>
+<script src="sma/index.js"></script>
+<script src="charts/index.js"></script>
+<script src="charts/acceleration.js"></script>
+<script src="charts/velocity.js"></script>
+<script src="charts/sma.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+    // The minimum acceleration to be considered.
+	var threshold = 7000;
+	// The number of seconds to collect sample.
+	var maxSamples = 60;
+	// Range is used by SMA
+	var range = 10;
+
+    window.onload = function() {
+		var fileInput = document.getElementById("csv"),
+		    readFile = function () {
+		        var reader = new FileReader();
+		        reader.onload = function () {
+		            var dataPoints = getDataPointsFromCSV(reader.result);
+					clearCharts();
+					showAccelerationChart(dataPoints);
+					showSMAChart(dataPoints, range);
+
+					// var velocityPoints = calcVelocity(dataPoints);
+					// showVelocityChart(velocityPoints);
+
+					// showSMAChart(velocityPoints, 3);
+				};
+		        reader.readAsBinaryString(fileInput.files[0]);
+		    };
+
+		fileInput.addEventListener('change', readFile);
+
+    }
+  //]]>
+</script>
+
+</head>
+<body>
+	<p>Select local CSV File:</p>
+	<input id="csv" type="file">
+	<div id='plotty'></div>
+	<output id="out"></output>
+	<div id="chartContainer" class"main" style="display:none; height: 370px; max-width: 100%; margin: 0px auto;"></div>
+</body>
+</html>
