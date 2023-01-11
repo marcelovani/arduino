@@ -6,9 +6,14 @@
 
 Runnable *Runnable::headRunnable;
 
-Led led(10);
-LedControlButton button(6, led);
-Taillight taillight(7, led, 12);
+Led led1(10);
+LedControlButton button1(5, led1);
+
+Led led2(11);
+LedControlButton button2(6, led2);
+
+Led led3(12);
+Taillight taillight(7, led3, 12);
 
 void setup() {
   Runnable::setupAll();

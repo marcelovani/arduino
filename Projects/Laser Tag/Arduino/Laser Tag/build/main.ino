@@ -86,46 +86,47 @@ class Button: public Runnable {
     }
 };
 class LedControlButton: public Button {
-    Led &lamp;
+    Led &led;
 
   public:
     LedControlButton(byte attachToPin, Led &attachToLed) :
       Button(attachToPin),
-      lamp(attachToLed) {
+      led(attachToLed) {
     }
   protected:
     void click() {
-      lamp.powerToggle();
+      led.powerToggle();
     }
 };
 
 class Taillight: public Runnable {
     const byte brakeSensePin;
-    const byte ledOutPin;
-    Led &headlamp;
+    const byte ledPin;
+    Led &led;
 
   public:
     Taillight(byte attachToBrakeSense, Led &attachToLed, byte attachToLedPin) :
       brakeSensePin(attachToBrakeSense),
-      ledOutPin(attachToLedPin),
-      headlamp(attachToLed) {
+      led(attachToLed),
+      ledPin(attachToLedPin) {
     }
 
     void setup() {
       pinMode(brakeSensePin, INPUT_PULLUP);
-      pinMode(ledOutPin, OUTPUT);
-      digitalWrite(ledOutPin, LOW);
+      // @todo try to use led.status instead of writing to the output diretly
+      pinMode(ledPin, OUTPUT);
+      digitalWrite(ledPin, LOW);
     }
 
     void loop() {
       if (digitalRead(brakeSensePin) == LOW) {
-        digitalWrite(ledOutPin, HIGH);
+        digitalWrite(ledPin, HIGH);
       }
-      else if (!headlamp.status) {
-        digitalWrite(ledOutPin, LOW);
+      else if (!led.status) {
+        digitalWrite(ledPin, LOW);
       }
       else {
-        digitalWrite(ledOutPin, (millis() & 0b1110000000) == 0 ? HIGH : LOW);
+        digitalWrite(ledPin, (millis() & 0b1110000000) == 0 ? HIGH : LOW);
       }
     }
 };
@@ -133,9 +134,14 @@ class Taillight: public Runnable {
 
 Runnable *Runnable::headRunnable;
 
-Led headlamp(10);
-LedControlButton button(6, headlamp);
-Taillight taillight(7, headlamp, 12);
+Led led1(10);
+LedControlButton button1(5, led1);
+
+Led led2(11);
+LedControlButton button2(6, led2);
+
+Led led3(12);
+Taillight taillight(7, led3, 12);
 
 void setup() {
   Runnable::setupAll();
