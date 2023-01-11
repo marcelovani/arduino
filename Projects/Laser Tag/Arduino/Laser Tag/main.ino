@@ -1,15 +1,14 @@
 #include "Runnable.cpp"
-#include "Headlamp.cpp"
+#include "Led.cpp"
 #include "Button.cpp"
-#include "HeadlampControlButton.cpp"
+#include "LedControlButton.cpp"
 #include "Taillight.cpp"
 
-Runnable *Runnable::headRunnable = NULL;
+Runnable *Runnable::headRunnable;
 
-Headlamp headlamp(10);
-HeadlampControlButton button(6, headlamp);
-Taillight taillight(7, headlamp, 12);
-
+Led led(10);
+LedControlButton button(6, led);
+Taillight taillight(7, led, 12);
 
 void setup() {
   Runnable::setupAll();

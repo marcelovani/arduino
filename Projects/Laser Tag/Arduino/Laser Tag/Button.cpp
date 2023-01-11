@@ -1,18 +1,14 @@
 class Button: public Runnable {
     const byte pin;
-    int state;
+    byte state;
     unsigned long buttonDownMs;
 
   protected:
-    virtual void shortClick() = 0;
-    virtual void longClick() = 0;
+    virtual void click() = 0;
 
   public:
-    Button(byte attachTo) :
-      pin(attachTo)
-    {
+    Button(byte attachTo) : pin(attachTo) {
     }
-
 
     void setup() {
       pinMode(pin, INPUT_PULLUP);
@@ -26,16 +22,12 @@ class Button: public Runnable {
         buttonDownMs = millis();
       }
       else if (prevState == LOW && state == HIGH) {
-        if (millis() - buttonDownMs < 50) {
-          // ignore this for debounce
-        }
-        else if (millis() - buttonDownMs < 250) {
-          shortClick();
+        if (millis() - buttonDownMs < 100) {
+          // debounce
         }
         else  {
-          longClick();
+          click();
         }
       }
     }
-
 };

@@ -1,13 +1,13 @@
 class Taillight: public Runnable {
     const byte brakeSensePin;
     const byte ledOutPin;
-    Headlamp &headlamp;
+    Led &headlamp;
 
   public:
-    Taillight(byte attachToBrakeSense, Headlamp &attachToHeadlamp, byte attachToLedPin) :
+    Taillight(byte attachToBrakeSense, Led &attachToLed, byte attachToLedPin) :
       brakeSensePin(attachToBrakeSense),
       ledOutPin(attachToLedPin),
-      headlamp(attachToHeadlamp) {
+      headlamp(attachToLed) {
     }
 
     void setup() {
@@ -20,7 +20,7 @@ class Taillight: public Runnable {
       if (digitalRead(brakeSensePin) == LOW) {
         digitalWrite(ledOutPin, HIGH);
       }
-      else if (!headlamp.isOn) {
+      else if (!headlamp.status) {
         digitalWrite(ledOutPin, LOW);
       }
       else {

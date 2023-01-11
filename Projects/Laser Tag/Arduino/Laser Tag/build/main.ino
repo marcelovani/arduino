@@ -24,62 +24,45 @@ class Runnable {
 
 };
 
-class Headlamp: public Runnable {
-    const byte powerOutPin;
-    int brightness;
+class Led: public Runnable {
+    const byte pin;
 
   public:
-    boolean isOn;
+    byte status;
 
-    Headlamp(byte powerOutAttach) :
-      powerOutPin(powerOutAttach)
-    {
+    Led(byte pin) : pin(pin) {
     }
 
     void setup() {
-      pinMode(powerOutPin, OUTPUT);
-      isOn = false;
-      digitalWrite(powerOutPin, LOW);
-      brightness = 0;
+      status = LOW;
+      pinMode(pin, OUTPUT);
+      digitalWrite(pin, status);
     }
 
     void loop() {
     }
 
     void powerToggle() {
-      if (isOn) {
-        digitalWrite(powerOutPin, LOW);
-        isOn = false;
+      if (status) {
+        status = LOW;
       }
       else {
-        digitalWrite(powerOutPin, HIGH);
-        delay(50);
-        isOn = true;
+        status = HIGH;
       }
+      digitalWrite(pin, status);
     }
-
-    void brightnessClick() {
-      if (isOn) {
-        brightness = (brightness + 1 ) % 5;
-      }
-    }
-
-} ;
+};
 class Button: public Runnable {
     const byte pin;
-    int state;
+    byte state;
     unsigned long buttonDownMs;
 
   protected:
-    virtual void shortClick() = 0;
-    virtual void longClick() = 0;
+    virtual void click() = 0;
 
   public:
-    Button(byte attachTo) :
-      pin(attachTo)
-    {
+    Button(byte attachTo) : pin(attachTo) {
     }
-
 
     void setup() {
       pinMode(pin, INPUT_PULLUP);
@@ -93,35 +76,25 @@ class Button: public Runnable {
         buttonDownMs = millis();
       }
       else if (prevState == LOW && state == HIGH) {
-        if (millis() - buttonDownMs < 50) {
-          // ignore this for debounce
-        }
-        else if (millis() - buttonDownMs < 250) {
-          shortClick();
+        if (millis() - buttonDownMs < 100) {
+          // debounce
         }
         else  {
-          longClick();
+          click();
         }
       }
     }
-
 };
-class HeadlampControlButton: public Button {
-    Headlamp &lamp;
+class LedControlButton: public Button {
+    Led &lamp;
 
   public:
-    HeadlampControlButton(byte attachToPin, Headlamp &attachToHeadlamp) :
+    LedControlButton(byte attachToPin, Led &attachToLed) :
       Button(attachToPin),
-      lamp(attachToHeadlamp) {
+      lamp(attachToLed) {
     }
   protected:
-    void shortClick() {
-      // short click
-      lamp.brightnessClick();
-    }
-
-    void longClick() {
-      // long click
+    void click() {
       lamp.powerToggle();
     }
 };
@@ -129,13 +102,13 @@ class HeadlampControlButton: public Button {
 class Taillight: public Runnable {
     const byte brakeSensePin;
     const byte ledOutPin;
-    Headlamp &headlamp;
+    Led &headlamp;
 
   public:
-    Taillight(byte attachToBrakeSense, Headlamp &attachToHeadlamp, byte attachToLedPin) :
+    Taillight(byte attachToBrakeSense, Led &attachToLed, byte attachToLedPin) :
       brakeSensePin(attachToBrakeSense),
       ledOutPin(attachToLedPin),
-      headlamp(attachToHeadlamp) {
+      headlamp(attachToLed) {
     }
 
     void setup() {
@@ -148,7 +121,7 @@ class Taillight: public Runnable {
       if (digitalRead(brakeSensePin) == LOW) {
         digitalWrite(ledOutPin, HIGH);
       }
-      else if (!headlamp.isOn) {
+      else if (!headlamp.status) {
         digitalWrite(ledOutPin, LOW);
       }
       else {
@@ -158,12 +131,11 @@ class Taillight: public Runnable {
 };
 
 
-Runnable *Runnable::headRunnable = NULL;
+Runnable *Runnable::headRunnable;
 
-Headlamp headlamp(10);
-HeadlampControlButton button(6, headlamp);
+Led headlamp(10);
+LedControlButton button(6, headlamp);
 Taillight taillight(7, headlamp, 12);
-
 
 void setup() {
   Runnable::setupAll();
