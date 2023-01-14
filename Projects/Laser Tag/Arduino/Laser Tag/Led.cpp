@@ -1,5 +1,5 @@
 class Led: public Runnable {
-    const byte pin;
+  const byte pin;
 
   public:
     byte status;
@@ -10,10 +10,14 @@ class Led: public Runnable {
     void setup() {
       status = LOW;
       pinMode(pin, OUTPUT);
-      digitalWrite(pin, status);
+      send();
     }
 
     void loop() {
+    }
+
+    void send() {
+      digitalWrite(pin, status);
     }
 
     void powerToggle() {
@@ -23,6 +27,24 @@ class Led: public Runnable {
       else {
         status = HIGH;
       }
-      digitalWrite(pin, status);
+      send();
+    }
+
+    byte getPin() {
+      return pin;
+    }
+
+    void on() {
+      if (!status) {
+        status = HIGH;
+        send();
+      }
+    }
+
+    void off() {
+      if (status) {
+        status = LOW;
+        send();
+      }
     }
 };

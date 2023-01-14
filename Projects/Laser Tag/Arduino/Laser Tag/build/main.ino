@@ -25,7 +25,7 @@ class Runnable {
 };
 
 class Led: public Runnable {
-    const byte pin;
+  const byte pin;
 
   public:
     byte status;
@@ -36,10 +36,14 @@ class Led: public Runnable {
     void setup() {
       status = LOW;
       pinMode(pin, OUTPUT);
-      digitalWrite(pin, status);
+      send();
     }
 
     void loop() {
+    }
+
+    void send() {
+      digitalWrite(pin, status);
     }
 
     void powerToggle() {
@@ -49,7 +53,25 @@ class Led: public Runnable {
       else {
         status = HIGH;
       }
-      digitalWrite(pin, status);
+      send();
+    }
+
+    byte getPin() {
+      return pin;
+    }
+
+    void on() {
+      if (!status) {
+        status = HIGH;
+        send();
+      }
+    }
+
+    void off() {
+      if (status) {
+        status = LOW;
+        send();
+      }
     }
 };
 class Button: public Runnable {
@@ -101,32 +123,28 @@ class LedControlButton: public Button {
 
 class Taillight: public Runnable {
     const byte brakeSensePin;
-    const byte ledPin;
     Led &led;
 
   public:
-    Taillight(byte attachToBrakeSense, Led &attachToLed, byte attachToLedPin) :
+    Taillight(byte attachToBrakeSense, Led &attachToLed) :
       brakeSensePin(attachToBrakeSense),
-      led(attachToLed),
-      ledPin(attachToLedPin) {
+      led(attachToLed) {
     }
 
     void setup() {
       pinMode(brakeSensePin, INPUT_PULLUP);
-      // @todo try to use led.status instead of writing to the output diretly
-      pinMode(ledPin, OUTPUT);
-      digitalWrite(ledPin, LOW);
+      led = new led(11);
     }
 
     void loop() {
       if (digitalRead(brakeSensePin) == LOW) {
-        digitalWrite(ledPin, HIGH);
+        led.on();
       }
       else if (!led.status) {
-        digitalWrite(ledPin, LOW);
+        led.off();
       }
       else {
-        digitalWrite(ledPin, (millis() & 0b1110000000) == 0 ? HIGH : LOW);
+        led.off();
       }
     }
 };
@@ -134,14 +152,13 @@ class Taillight: public Runnable {
 
 Runnable *Runnable::headRunnable;
 
-Led led1(10);
-LedControlButton button1(5, led1);
+Led led1(12);
+// LedControlButton button1(7, led1);
+Taillight taillight1(7, led1);
 
 Led led2(11);
-LedControlButton button2(6, led2);
-
-Led led3(12);
-Taillight taillight(7, led3, 12);
+//LedControlButton button2(6, led2);
+Taillight taillight2(6, led2);
 
 void setup() {
   Runnable::setupAll();
