@@ -190,16 +190,49 @@ class LedControlButton: public Button {
     }
 };
 
+#include <Servo.h>
+
+class Servos: public Runnable {
+    byte pin;
+    Servo servo;
+
+  public:
+    Servos(byte pin) : pin(pin) {
+    }
+
+    void setup() {
+      servo.attach(pin);
+      set();
+    }
+
+    void loop() {
+    }
+
+    void set() {
+        servo.write(90);
+    }
+
+    void drop() {
+        servo.write(180);
+    }
+};
+
 class Target: public Runnable {
     const byte brakeSensePin;
     Laser &laser;
     RgbLed &rgb;
+    Servos &servo;
 
   public:
-    Target(byte attachToBrakeSense, Laser &laserInstance, RgbLed &rgbInstance) :
+    Target(byte attachToBrakeSense, Laser &laserInstance, RgbLed &rgbInstance, Servos &servoInstance) :
       brakeSensePin(attachToBrakeSense),
       laser(laserInstance),
-      rgb(rgbInstance) {
+      rgb(rgbInstance),
+      servo(servoInstance) {
+    }
+
+    byte getPin() {
+      return brakeSensePin;
     }
 
     void setup() {
@@ -208,8 +241,10 @@ class Target: public Runnable {
 
     void loop() {
       if (digitalRead(brakeSensePin) == LOW) {
+        Serial.println("Target: " + String(brakeSensePin));
         laser.on();
         rgb.green();
+        servo.drop();
       }
       else {
         laser.off();
@@ -218,21 +253,40 @@ class Target: public Runnable {
     }
 };
 
+#if defined(__ARDUINO_AVR_UNO__) || defined(ARDUINO_AVR_UNO)
+
+    Laser laser1(13);
+    RgbLed rgb1(12, 10, 11);
+    Servos servo1(9);
+    Target target1(8, laser1, rgb1, servo1);
+
+    Laser laser2(6);
+    RgbLed rgb2(5, 3, 4);
+    Servos servo2(2);
+    Target target2(7, laser2, rgb2, servo2);
+
+#endif
+
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+
+    Laser laser1(6);
+    RgbLed rgb1(4, 3, 2);
+    Servos servo1(7);
+    Target target1(5, laser1, rgb1, servo1);
+
+    Laser laser2(12);
+    RgbLed rgb2(10, 9, 8);
+    Servos servo2(13);
+    Target target2(11, laser2, rgb2, servo2);
+
+#endif
+
 
 Runnable *Runnable::headRunnable;
 
-Laser laser1(13);
-RgbLed rgb1(12, 10, 11);
-// LedControlButton button1(7, laser1);
-Target target1(8, laser1, rgb1);
-
-// Led laser2(6);
-Laser laser2(6);
-RgbLed rgb2(5, 3, 4);
-// LedControlButton button2(6, laser2);
-Target target2(7, laser2, rgb2);
 
 void setup() {
+  Serial.begin(9600);
   Runnable::setupAll();
 }
 
