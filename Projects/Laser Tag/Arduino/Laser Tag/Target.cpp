@@ -18,18 +18,20 @@ class Target: public Runnable {
 
     void setup() {
       pinMode(brakeSensePin, INPUT_PULLUP);
+      laser.off();
+      rgb.blink();
     }
 
     void loop() {
       if (digitalRead(brakeSensePin) == LOW) {
         Serial.println("Target: " + String(brakeSensePin));
-        laser.on();
-        rgb.green();
+        laser.blink();
+        rgb.red();
         servo.drop();
       }
       else {
-        laser.off();
-        rgb.blue();
+        // laser.off();
+        // rgb.blue();
       }
     }
 };

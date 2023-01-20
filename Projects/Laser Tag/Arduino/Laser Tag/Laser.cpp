@@ -20,4 +20,8 @@ class Laser: public Runnable {
     void off() {
         led.off();
     }
+
+    void blink() {
+        led.blink(200, 400, 5);
+    }
 };

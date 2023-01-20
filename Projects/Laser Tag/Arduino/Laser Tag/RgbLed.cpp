@@ -41,4 +41,8 @@ class RgbLed: public Runnable {
     void off() {
         gLed.off();
     }
+
+    void blink() {
+        gLed.blink(100, 500, 5);
+    }
 };

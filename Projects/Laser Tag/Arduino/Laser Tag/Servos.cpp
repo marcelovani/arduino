@@ -17,10 +17,10 @@ class Servos: public Runnable {
     }
 
     void set() {
-        servo.write(90);
+        servo.write(160);
     }
 
     void drop() {
-        servo.write(180);
+        servo.write(90);
     }
 };

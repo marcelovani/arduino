@@ -2,14 +2,15 @@
 clear
 
 # Load includes
-includes=$(cat main.ino | grep 'include.*\.cpp' | tr -d '"')
+includes=$(cat main.ino | grep 'include.*[\.cpp|\.h]' | tr -d '"')
+echo ${includes}
 
 # Init build
 echo > ./build/main.ino
 
 for item in ${includes}
 do
-    if [[ "$item" == *".cpp"* ]]; then
+    if [[ "$item" == *".h"* || "$item" == *".cpp"* ]]; then
         cat $item >> ./build/main.ino
         echo >> ./build/main.ino
     fi
