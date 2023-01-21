@@ -8,10 +8,9 @@ class Led: public Runnable {
   private:
     MillisTimer _timerOn;
     MillisTimer _timerOff;
-
-  public:
     byte status;
 
+  public:
     Led(byte pin) : pin(pin) {
     }
 
@@ -22,40 +21,7 @@ class Led: public Runnable {
     }
 
     void loop() {
-      if (_timerRepeat == 0) {
-        this->_timerOn.stop();
-        this->_timerOff.stop();
-        this->off();
-      }
-
-      if (this->status == LOW && _timerRepeat > 0) {
-        this->_timerOn.run();
-        if (this->_timerOn.isRunning())
-        {
-          this->send();
-        }
-
-        if (!this->_timerOn.isRunning())
-        {
-          this->on();
-          _timerRepeat--;
-          this->timerOffStart();
-        }
-      }
-
-      if (this->status == HIGH && _timerRepeat > 0) {
-        this->_timerOff.run();
-        if (this->_timerOff.isRunning())
-        {
-          this->send();
-        }
-
-        if (!this->_timerOff.isRunning())
-        {
-          this->off();
-          this->timerOnStart();
-        }
-      }
+      this->timerLoop();
     }
 
     void send() {
@@ -90,20 +56,6 @@ class Led: public Runnable {
       }
     }
 
-    void timerOnStart()
-    {
-      this->_timerOn.setInterval(_timerDuration);
-      this->_timerOn.setRepeats(1);
-      this->_timerOn.start();
-    }
-
-    void timerOffStart()
-    {
-      this->_timerOff.setInterval(_timerInterval);
-      this->_timerOff.setRepeats(1);
-      this->_timerOff.start();
-    }
-
     /**
      * Blink needs 3 arguments
      *  - Interval: How how long between blinks (when Repeat is > 1)
@@ -112,9 +64,7 @@ class Led: public Runnable {
      */
     void blink(unsigned long interval, unsigned long duration, byte repeat)
     {
-      // Serial.print("Blink repeat "); Serial.println(_timerRepeat);
       if (this->_timerOn.isRunning() || this->_timerOff.isRunning()) {
-        // Serial.println(_id + " timer is running");
         return;
       }
 
@@ -122,7 +72,70 @@ class Led: public Runnable {
       _timerInterval = interval;
       _timerDuration = duration;
       this->status = LOW;
-
       this->timerOnStart();
+    }
+
+    /**
+     * Start a timer to turn ON the Led.
+     */
+    void timerOnStart()
+    {
+      this->_timerOn.setInterval(_timerDuration);
+      this->_timerOn.setRepeats(1);
+      this->_timerOn.start();
+    }
+
+    /**
+     * Start a timer to turn OFF the Led.
+     */
+    void timerOffStart()
+    {
+      this->_timerOff.setInterval(_timerInterval);
+      this->_timerOff.setRepeats(1);
+      this->_timerOff.start();
+    }
+
+    /**
+     * Timer loop controller.
+     * Flip-flop mechanism to toggle the Led status.
+     */
+    void timerLoop() {
+      // When there is no more repeats, turn everything off
+      if (_timerRepeat == 0) {
+        this->_timerOn.stop();
+        this->_timerOff.stop();
+        this->off();
+      }
+
+      // Flip-flop for Led OFF.
+      if (this->status == LOW && _timerRepeat > 0) {
+        this->_timerOn.run();
+        if (this->_timerOn.isRunning())
+        {
+          this->send();
+        }
+
+        if (!this->_timerOn.isRunning())
+        {
+          this->on();
+          _timerRepeat--;
+          this->timerOffStart();
+        }
+      }
+
+      // Flip flop for Led ON.
+      if (this->status == HIGH && _timerRepeat > 0) {
+        this->_timerOff.run();
+        if (this->_timerOff.isRunning())
+        {
+          this->send();
+        }
+
+        if (!this->_timerOff.isRunning())
+        {
+          this->off();
+          this->timerOnStart();
+        }
+      }
     }
 };

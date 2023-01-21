@@ -1,6 +1,8 @@
 #!/bin/bash
 clear
 
+mkdir -p build
+
 # Load includes
 includes=$(cat main.ino | grep 'include.*[\.cpp|\.h]' | tr -d '"')
 echo ${includes}

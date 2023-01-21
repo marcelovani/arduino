@@ -1,3 +1,4 @@
+// @todo decide what todo with this class
 class LedControlButton: public Button {
     Led &led;
 

@@ -6,10 +6,11 @@ class Target: public Runnable {
 
   public:
     Target(byte attachToBrakeSense, Laser &laserInstance, RgbLed &rgbInstance, Servos &servoInstance) :
+      servo(servoInstance),
+      // @todo replace this with IR receiver
       brakeSensePin(attachToBrakeSense),
       laser(laserInstance),
-      rgb(rgbInstance),
-      servo(servoInstance) {
+      rgb(rgbInstance) {
     }
 
     byte getPin() {
@@ -24,7 +25,6 @@ class Target: public Runnable {
 
     void loop() {
       if (digitalRead(brakeSensePin) == LOW) {
-        Serial.println("Target: " + String(brakeSensePin));
         laser.blink();
         rgb.red();
         servo.drop();
