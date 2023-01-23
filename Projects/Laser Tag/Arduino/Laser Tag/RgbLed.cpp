@@ -38,11 +38,44 @@ class RgbLed: public Runnable {
         bLed.on();
     }
 
+    void yellow() {
+        rLed.on();
+        gLed.on();
+        bLed.off();
+    }
+
+    void purple() {
+        rLed.on();
+        gLed.off();
+        bLed.on();
+    }
+
+    void cyan() {
+        rLed.off();
+        gLed.on();
+        bLed.on();
+    }
+
+    void white() {
+        rLed.on();
+        gLed.on();
+        bLed.on();
+    }
+
+
     void off() {
         gLed.off();
     }
 
     void blink() {
-        gLed.blink(100, 500, 5);
+        if (rLed.isOn()) {
+            rLed.blink(100, 500, 5);
+        }
+        if (gLed.isOn()) {
+            gLed.blink(100, 500, 5);
+        }
+        if (bLed.isOn()) {
+            bLed.blink(100, 500, 5);
+        }
     }
 };

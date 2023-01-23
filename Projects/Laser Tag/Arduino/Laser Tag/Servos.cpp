@@ -9,6 +9,7 @@ class Servos: public Runnable {
     byte position;
     byte start_position;
     byte drop_position;
+    unsigned long timer_delay;
 
   public:
     Servos(byte pin) : pin(pin) {
@@ -19,6 +20,10 @@ class Servos: public Runnable {
       // @todo make this configurable.
       this->start_position = 160;
       this->drop_position = 90;
+      // Timer delay between 10 and 30 seconds.
+      this->timer_delay = 10 + rand() % 20;
+      // Debugging
+      this->timer_delay = 5;
       this->reset();
     }
 
@@ -34,7 +39,6 @@ class Servos: public Runnable {
     void drop() {
       this->position = this->drop_position;
       this->send();
-      // Timer delay between 10 and 30 seconds.
       this->timerOnStart(10 + rand() % 20);
     }
 
@@ -45,8 +49,8 @@ class Servos: public Runnable {
     /**
      * Used to check if the target is up or dropped.
      */
-    boolean targetIsOn() {
-      return this->position = this->start_position;
+    boolean isOn() {
+      return this->position == this->start_position;
     }
 
     /**

@@ -20,6 +20,7 @@ class Target: public Runnable {
     void setup() {
       pinMode(brakeSensePin, INPUT_PULLUP);
       laser.off();
+      rgb.yellow();
       rgb.blink();
     }
 
@@ -32,6 +33,9 @@ class Target: public Runnable {
       else {
         // laser.off();
         // rgb.blue();
+      }
+      if (servo.isOn()) {
+        rgb.green();
       }
     }
 };

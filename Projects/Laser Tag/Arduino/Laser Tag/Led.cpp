@@ -56,6 +56,14 @@ class Led: public Runnable {
       }
     }
 
+    byte isOn() {
+      return status == HIGH;
+    }
+
+    byte isOff() {
+      return status == LOW;
+    }
+
     /**
      * Blink needs 3 arguments
      *  - Interval: How how long between blinks (when Repeat is > 1)
