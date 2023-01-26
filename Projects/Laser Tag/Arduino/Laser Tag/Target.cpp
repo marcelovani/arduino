@@ -35,13 +35,13 @@ class Target: public Runnable {
     }
 
     void loop() {
-      byte gunShot;
-      gunShot = infra.getShot();
-      if (digitalRead(brakeSensePin) == LOW || gunShot) {
+      byte gun;
+      gun = infra.getShot();
+      if (digitalRead(brakeSensePin) == LOW || gun) {
         Serial.print("Target ");
         Serial.print(this->targetId);
-        Serial.print("Shot");
-        Serial.println(gunShot);
+        Serial.print(" Gun ");
+        Serial.println(gun);
         laser.blink();
         rgb.red();
         servo.drop();
