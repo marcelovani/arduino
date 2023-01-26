@@ -16,17 +16,23 @@
 
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 
-    Servos servo2(13);
-    Laser laser2(12);
-    RgbLed rgb2(10, 9, 8);
-    Infra ir2(14);
-    Target target1(1, 11, laser2, rgb2, servo2, ir2);
+    Servos servo1(13);
+    Laser laser1(12);
+    RgbLed rgb1(10, 9, 8);
+    Infra ir1(14);
+    Target target1(1, 11, laser1, rgb1, servo1, ir1);
 
-    Servos servo1(7);
-    Laser laser1(6);
-    RgbLed rgb1(4, 3, 2);
-    Infra ir1(15);
-    Target target2(2, 5, laser1, rgb1, servo1, ir1);
+    Servos servo2(7);
+    Laser laser2(6);
+    RgbLed rgb2(4, 3, 2);
+    Infra ir2(15);
+    Target target2(2, 5, laser2, rgb2, servo2, ir2);
+
+    // Servos servo3(22);
+    // Laser laser3(23);
+    // RgbLed rgb3(24, 25, 26);
+    // Infra ir3(27);
+    // Target target3(3, 28, laser3, rgb3, servo3, ir3);
 
 #endif
 

@@ -37,27 +37,29 @@ class Target: public Runnable {
     }
 
     void loop() {
-      byte gun;
+      byte gunShot;
 
       if (servo.isOn()) {
         rgb.green();
         this->isReady = 1;
       }
       else {
+        rgb.red();
         this->isReady = 0;
       }
 
       // Check for shots.
-      gun = infra.getShot();
-      if (digitalRead(brakeSensePin) == LOW || gun) {
+      gunShot = infra.getShot();
+      if (gunShot || digitalRead(brakeSensePin) == LOW) {
+        Serial.print("Gun " + String(gunShot) + " shot target " + String(this->targetId) + " - ");
         if (this->isReady) {
-          Serial.println("Gun " + String(gun) + " hit target " + String(this->targetId));
+          Serial.println("Hit");
           laser.blink();
           rgb.red();
           servo.drop();
         }
         else {
-          Serial.println("Target " + String(this->targetId) + " is not ready");
+          Serial.println("Not ready");
         }
       }
     }
