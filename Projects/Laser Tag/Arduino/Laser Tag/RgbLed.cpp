@@ -10,8 +10,7 @@ class RgbLed: public Runnable {
     RgbLed(byte rPin, byte gPin, byte bPin) :
       rLed(rPin),
       gLed(gPin),
-      bLed(bPin)
-      {
+      bLed(bPin) {
     }
 
     void setup() {

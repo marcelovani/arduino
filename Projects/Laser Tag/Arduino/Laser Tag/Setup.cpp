@@ -25,3 +25,8 @@
     Target target2(11, laser2, rgb2, servo2);
 
 #endif
+
+void setup() {
+  Serial.begin(9600);
+  Runnable::setupAll();
+}

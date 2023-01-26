@@ -22,3 +22,5 @@ class Runnable {
     }
 
 };
+
+Runnable *Runnable::headRunnable;
