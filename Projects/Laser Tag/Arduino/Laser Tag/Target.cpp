@@ -3,14 +3,24 @@ class Target: public Runnable {
     Laser &laser;
     RgbLed &rgb;
     Servos &servo;
+    Infra &infra;
+    byte targetId;
 
   public:
-    Target(byte attachToBrakeSense, Laser &laserInstance, RgbLed &rgbInstance, Servos &servoInstance) :
-      servo(servoInstance),
-      // @todo replace this with IR receiver
-      brakeSensePin(attachToBrakeSense),
-      laser(laserInstance),
-      rgb(rgbInstance) {
+    Target(
+        byte id,
+        byte attachToBrakeSense,
+        Laser &laserInstance,
+        RgbLed &rgbInstance,
+        Servos &servoInstance,
+        Infra &infraInstance
+      ) :
+        targetId(id),
+        servo(servoInstance),
+        brakeSensePin(attachToBrakeSense),
+        laser(laserInstance),
+        rgb(rgbInstance),
+        infra(infraInstance) {
     }
 
     byte getPin() {
@@ -25,7 +35,13 @@ class Target: public Runnable {
     }
 
     void loop() {
-      if (digitalRead(brakeSensePin) == LOW) {
+      byte gunShot;
+      gunShot = infra.getShot();
+      if (digitalRead(brakeSensePin) == LOW || gunShot) {
+        Serial.print("Target ");
+        Serial.print(this->targetId);
+        Serial.print("Shot");
+        Serial.println(gunShot);
         laser.blink();
         rgb.red();
         servo.drop();
