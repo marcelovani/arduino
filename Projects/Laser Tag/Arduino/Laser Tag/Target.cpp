@@ -5,6 +5,7 @@ class Target: public Runnable {
     Servos &servo;
     Infra &infra;
     byte targetId;
+    byte isReady;
 
   public:
     Target(
@@ -32,26 +33,32 @@ class Target: public Runnable {
       laser.off();
       rgb.yellow();
       rgb.blink();
+      this->isReady = 0;
     }
 
     void loop() {
       byte gun;
-      gun = infra.getShot();
-      if (digitalRead(brakeSensePin) == LOW || gun) {
-        Serial.print("Target ");
-        Serial.print(this->targetId);
-        Serial.print(" Gun ");
-        Serial.println(gun);
-        laser.blink();
-        rgb.red();
-        servo.drop();
-      }
-      else {
-        // laser.off();
-        // rgb.blue();
-      }
+
       if (servo.isOn()) {
         rgb.green();
+        this->isReady = 1;
+      }
+      else {
+        this->isReady = 0;
+      }
+
+      // Check for shots.
+      gun = infra.getShot();
+      if (digitalRead(brakeSensePin) == LOW || gun) {
+        if (this->isReady) {
+          Serial.println("Gun " + String(gun) + " hit target " + String(this->targetId));
+          laser.blink();
+          rgb.red();
+          servo.drop();
+        }
+        else {
+          Serial.println("Target " + String(this->targetId) + " is not ready");
+        }
       }
     }
 };
