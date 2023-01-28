@@ -15,6 +15,10 @@
 #include "Servos.cpp"
 #include "Target.cpp"
 #include "Setup.cpp"
+//#include "TargetRandomizer.cpp"
+
+// Create instance of the target randomizer.
+//TargetRandomizer randomizer(2);
 
 void loop() {
   Runnable::loopAll();

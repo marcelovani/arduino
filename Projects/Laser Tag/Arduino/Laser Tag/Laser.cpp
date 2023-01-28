@@ -1,5 +1,4 @@
 class Laser: public Runnable {
-    byte pin;
     Led led;
 
   public:

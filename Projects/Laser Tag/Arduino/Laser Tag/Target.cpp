@@ -5,9 +5,23 @@ class Target: public Runnable {
     Servos &servo;
     Infra &infra;
     byte targetId;
-    byte isReady;
+    byte ready;
+
+  private:
+    byte gunShot;
+
+    void randomTarget() {
+      Serial.println("Active target " + String(activeTarget));
+      activeTarget = random(targetCount) + 1;
+      if (activeTarget > targetCount || (activeTarget == this->targetId && !this->ready)) {
+        this->randomTarget();
+      }
+      Serial.println("Active target " + String(activeTarget));
+    }
 
   public:
+    Target() {}
+
     Target(
         byte id,
         byte attachToBrakeSense,
@@ -28,35 +42,41 @@ class Target: public Runnable {
       return brakeSensePin;
     }
 
+    boolean isReady() {
+      return this->ready;
+    }
+
     void setup() {
       pinMode(brakeSensePin, INPUT_PULLUP);
       laser.off();
       rgb.yellow();
       rgb.blink();
-      this->isReady = 0;
+      this->ready = 1;
     }
 
     void loop() {
-      byte gunShot;
-
-      if (servo.isOn()) {
-        rgb.green();
-        this->isReady = 1;
-      }
-      else {
-        rgb.red();
-        this->isReady = 0;
-      }
+      // Update ready status. @todo we dont need to associate this, we can get status directy in isReady()
+      this->ready = servo.isOn();
 
       // Check for shots.
-      if (this->isReady) {
-        gunShot = infra.getShot();
-        if (gunShot || digitalRead(brakeSensePin) == LOW) {
-          Serial.print("Gun " + String(gunShot) + " shot target " + String(this->targetId) + " - ");
+      if (activeTarget == this->targetId) {
+        if (this->ready) {
+          rgb.green();
+          gunShot = infra.getShot();
+          if (gunShot || digitalRead(brakeSensePin) == LOW) {
+            Serial.print("Gun " + String(gunShot) + " shot target " + String(this->targetId) + " - ");
             Serial.println("Hit");
             laser.blink();
             rgb.red();
+            this->ready = 0;
             servo.drop();
+            // Force TargetRandomizer to pick another target.
+            //activeTarget = 0;
+            this->randomTarget();
+          }
+        }
+        else {
+          rgb.red();
         }
       }
     }

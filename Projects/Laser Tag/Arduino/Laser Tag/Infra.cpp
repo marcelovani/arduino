@@ -1,6 +1,6 @@
 #ifdef INFRA_ENABLED
   // Library http://www.harctoolbox.org/downloads/index.html
-  #include <IrReceiverSampler.h>
+  #include <IrReceiverPoll.h>
 #endif
 
 // Infra Red Receiver.
@@ -14,7 +14,7 @@ class Infra: public Runnable {
     int player;
 
     #ifdef INFRA_ENABLED
-      IrReceiver *receiver;
+      IrReceiverPoll receiver;
       static constexpr size_t BUFFERSIZE = 200U;
     #endif
 
@@ -23,12 +23,10 @@ class Infra: public Runnable {
     {
       #ifdef INFRA_ENABLED
         // Use data length to get the duration of the 4th position from the end.
-        d1 = receiver->getDuration(receiver->getDataLength() - 4);
+        d1 = receiver.getDuration(receiver.getDataLength() - 4);
         // Use data length to get the duration of the 2th position from the end.
-        d2 = receiver->getDuration(receiver->getDataLength() - 2);
-
-        Serial.println("Data points " + String(d1) + ", " + String(d2));
-
+        d2 = receiver.getDuration(receiver.getDataLength() - 2);
+        //Serial.println("Data points " + String(d1) + ", " + String(d2));
         if (d1 > t) {
           if (d2 < t) {
             this->player = 1;
@@ -43,28 +41,27 @@ class Infra: public Runnable {
           this->player = 2;
         }
       #endif
-      Serial.println("Player " + String(this->player));
+      //Serial.println("Player " + String(this->player));
       return player;
     }
 
   public:
-  //receiver = new IrReceiverPoll(BUFFERSIZE, RECEIVE_PIN);
-    Infra(byte pin): pin(pin) {
-    }
+    #ifdef INFRA_ENABLED
+      Infra(byte pin): pin(pin), receiver(this->BUFFERSIZE, pin) {
+      }
+    #else
+      Infra(byte pin): pin(pin) {
+      }
+    #endif
 
     void setup() {
-      #ifdef INFRA_ENABLED
-        receiver = IrReceiverSampler::newIrReceiverSampler(BUFFERSIZE, this->pin);
-        receiver->enable();
-      #endif
     }
 
     byte getShot() {
       // Checks received an IR signal
       #ifdef INFRA_ENABLED
-        receiver->receive();
-        if (!receiver->isEmpty()) {
-          // Check which gun shot the target.
+        receiver.receive();
+        if (!receiver.isEmpty()) {
           return this->translateIR();
         }
       #endif

@@ -1,5 +1,4 @@
 class RgbLed: public Runnable {
-    byte rPin, gPin, bPin;
     Led rLed, gLed, bLed;
 
   public:
