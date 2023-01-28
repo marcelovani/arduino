@@ -39,7 +39,8 @@ class Servos: public Runnable {
     void drop() {
       this->position = this->drop_position;
       this->send();
-      this->timerOnStart(10 + rand() % 20);
+      // temp this->timerOnStart(10 + rand() % 20);
+      this->timerOnStart(5 + rand() % 5);
     }
 
     void send() {

@@ -1,49 +1,73 @@
-#include <IRremote.h>
+#ifdef INFRA_ENABLED
+  // Library http://www.harctoolbox.org/downloads/index.html
+  #include <IrReceiverSampler.h>
+#endif
 
 // Infra Red Receiver.
 class Infra: public Runnable {
     byte pin;
-    IRrecv receiver;
+    // Duration readings.
+    int d1, d2;
+    // Threshold. @todo make configurable
+    int t = 1100;
+    // Which gun shot the target.
+    int player;
+
+    #ifdef INFRA_ENABLED
+      IrReceiver *receiver;
+      static constexpr size_t BUFFERSIZE = 200U;
+    #endif
 
   private:
     byte translateIR()
     {
-      // Takes command based on IR code received
-      switch (receiver.decodedIRData.command) {
-        case 48:
-          // Gun 1
-          return 1;
-          break;
+      #ifdef INFRA_ENABLED
+        // Use data length to get the duration of the 4th position from the end.
+        d1 = receiver->getDuration(receiver->getDataLength() - 4);
+        // Use data length to get the duration of the 2th position from the end.
+        d2 = receiver->getDuration(receiver->getDataLength() - 2);
 
-        case 24:
-          // Gun 2
-          return 2;
-          break;
+        Serial.println("Data points " + String(d1) + ", " + String(d2));
 
-        default:
-          Serial.println(receiver.decodedIRData.command);
-      }
+        if (d1 > t) {
+          if (d2 < t) {
+            this->player = 1;
+            Serial.println("***********");
+          } else {
+            Serial.println("***********     ***********     ***********");
+            this->player = 3;
+          }
+        }
+        else if (d2 > t) {
+          Serial.println("***********     ***********");
+          this->player = 2;
+        }
+      #endif
+      Serial.println("Player " + String(this->player));
+      return player;
     }
 
   public:
-    Infra(byte pin) :
-      receiver(pin) {
+  //receiver = new IrReceiverPoll(BUFFERSIZE, RECEIVE_PIN);
+    Infra(byte pin): pin(pin) {
     }
 
     void setup() {
-      receiver.enableIRIn();
+      #ifdef INFRA_ENABLED
+        receiver = IrReceiverSampler::newIrReceiverSampler(BUFFERSIZE, this->pin);
+        receiver->enable();
+      #endif
     }
 
     byte getShot() {
-      byte gun;
       // Checks received an IR signal
-      if (receiver.decode()) {
-        gun = this->translateIR();
-        // Receive the next value
-        receiver.resume();
-        return gun;
-      }
-      return 0;
+      #ifdef INFRA_ENABLED
+        receiver->receive();
+        if (!receiver->isEmpty()) {
+          // Check which gun shot the target.
+          return this->translateIR();
+        }
+      #endif
     }
 
     void loop() {

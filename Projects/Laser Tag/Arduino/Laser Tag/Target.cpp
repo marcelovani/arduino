@@ -49,17 +49,14 @@ class Target: public Runnable {
       }
 
       // Check for shots.
-      gunShot = infra.getShot();
-      if (gunShot || digitalRead(brakeSensePin) == LOW) {
-        Serial.print("Gun " + String(gunShot) + " shot target " + String(this->targetId) + " - ");
-        if (this->isReady) {
-          Serial.println("Hit");
-          laser.blink();
-          rgb.red();
-          servo.drop();
-        }
-        else {
-          Serial.println("Not ready");
+      if (this->isReady) {
+        gunShot = infra.getShot();
+        if (gunShot || digitalRead(brakeSensePin) == LOW) {
+          Serial.print("Gun " + String(gunShot) + " shot target " + String(this->targetId) + " - ");
+            Serial.println("Hit");
+            laser.blink();
+            rgb.red();
+            servo.drop();
         }
       }
     }

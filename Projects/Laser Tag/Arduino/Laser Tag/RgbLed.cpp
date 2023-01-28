@@ -1,10 +1,6 @@
 class RgbLed: public Runnable {
-    byte rPin;
-    byte gPin;
-    byte bPin;
-    Led rLed;
-    Led gLed;
-    Led bLed;
+    byte rPin, gPin, bPin;
+    Led rLed, gLed, bLed;
 
   public:
     RgbLed(byte rPin, byte gPin, byte bPin) :
